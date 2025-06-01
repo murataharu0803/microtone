@@ -33,7 +33,7 @@ export default tseslint.config(
       reactRecommended,
       reactHooks.configs.recommended,
     ],
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: ['src/**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -60,7 +60,8 @@ export default tseslint.config(
       'curly': ['warn', 'multi-or-nest'],
       'object-shorthand': ['warn', 'always'],
       'eqeqeq': ['warn', 'always'],
-      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
       '@stylistic/max-len': ['warn', 100],
       '@stylistic/indent': ['warn', 2],
       '@stylistic/semi': ['warn', 'never'],
