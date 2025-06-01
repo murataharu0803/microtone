@@ -8,5 +8,7 @@ export default defineConfig({
     react(),
     tsconfigPaths(),
   ],
-  envDir: '../',
+  build: {
+    outDir: './docs',
+  },
 })
