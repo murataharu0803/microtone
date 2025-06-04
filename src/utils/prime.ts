@@ -22,6 +22,13 @@ export const OVERTONES_FACTORS = [
   17, 19, 21, 23, 25, 27, 29, 31,
 ]
 
+export const OVERTONES_COLORS = [
+  '#FFFFFF', '#f4788d', '#76cc89', '#b094e6',
+  '#ffc248', '#50cbde', '#FF0000', '#00FF00',
+  '#0000FF', '#00FFFF', '#FF00FF', '#FFFF00',
+  '#FF8000', '#8000FF', '#0080FF', '#808000',
+]
+
 export const OVERTONES_FACTORIZATIONS = OVERTONES_FACTORS.map(
   n => {
     if (n > MAX)
@@ -83,10 +90,12 @@ export const getOvertonePitches = (
     factorization: number[]
     factor: number
     pitch: number
+    color: string
   }[] = [{
     factorization: Array(primesCount).fill(0),
     factor: 1,
     pitch: 0,
+    color: OVERTONES_COLORS[0],
   }]
   for (const overtone of overtones) {
     for (const division of divisions) {
@@ -105,10 +114,17 @@ export const getOvertonePitches = (
         (count, index) => count - division.factorization[index],
       )
 
+      const maxPrimeIndex = factorization.length - 1 - [...factorization].reverse().findIndex(
+        (count, index) => count && OVERTONES_COLORS[index],
+      )
+      const color = OVERTONES_COLORS[maxPrimeIndex] || '#888888'
+
+
       factors.push({
         factorization,
         factor,
         pitch,
+        color,
       })
     }
   }

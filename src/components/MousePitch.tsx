@@ -1,66 +1,109 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 
-import Pitch from '@/components/Pitch'
+import PitchButton from '@/components/PitchButton'
 import { PitchCircleContext } from '@/components/PitchCircle'
 import { SVGContext } from '@/components/SVGWithContext'
 
-import { useAudio } from '@/hooks/useAudio'
+import { PitchLine } from '@/components/PitchLine'
 import { useMouse } from '@/hooks/useMouse'
+
+const MOUSE_SNAP = 40
 
 const MousePitch: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
   const {
     baseFrequency,
-    radius,
     center,
-    octaveShiftRef,
+    startPitch,
+    endPitch,
+    startRadius,
+    radiusStep,
+    playNote,
+    stopNote,
   } = useContext(PitchCircleContext)
 
+  const noteToken = useRef<string | null>(null)
 
-  const getFrequency = () => {
+  const startOctave = Math.floor(startPitch)
+  const endOctave = Math.ceil(endPitch)
+  const octaves = Array.from(
+    { length: endOctave - startOctave + 1 },
+    (_, i) => i + startOctave,
+  )
+
+  const getNote = () => {
     if (!mousePosition) return null
 
     const distanceToCenter = Math.sqrt(
       Math.pow(mousePosition.x - center.x, 2) +
       Math.pow(mousePosition.y - center.y, 2),
     )
-    const isInsideCircle = distanceToCenter <= radius && distanceToCenter > 0
-    if (!isInsideCircle) return null
 
-    const extendedPosition = {
-      x: center.x + (mousePosition!.x - center.x) * (radius / distanceToCenter!),
-      y: center.y + (mousePosition!.y - center.y) * (radius / distanceToCenter!),
-    }
     const mouseAngle =
-      Math.atan2(extendedPosition.y - center.y, extendedPosition.x - center.x) + 5 * Math.PI / 2
-    const mouseFrequency = baseFrequency * Math.pow(
-      2,
-      (mouseAngle! % (2 * Math.PI)) / (2 * Math.PI) + octaveShiftRef!.current,
-    )
+      Math.atan2(mousePosition.y - center.y, mousePosition.x - center.x) + 5 * Math.PI / 2
+    const mouseNormalizedPitch = mouseAngle / (2 * Math.PI) % 1
+    const deltaPitch = (mouseNormalizedPitch - startPitch) % 1
+    const firstDeltaPitch = deltaPitch < 0 ? deltaPitch + 1 : deltaPitch
 
-    return mouseFrequency
+    const pitches = octaves
+      .map(octave => ({ pitch: firstDeltaPitch + startPitch + octave, octave }))
+      .filter(note => note.pitch >= startPitch && note.pitch <= endPitch)
+      .map(note => ({
+        distance: (note.pitch - startPitch) * radiusStep + startRadius,
+        pitch: note.pitch,
+        octave: note.octave,
+      }))
+    const closestPitch = pitches.reduce(
+      (prev, curr) =>
+        Math.abs(curr.distance - distanceToCenter) < Math.abs(prev.distance - distanceToCenter)
+          ? curr : prev,
+      pitches[0],
+    )
+    if (Math.abs(closestPitch.distance - distanceToCenter) > MOUSE_SNAP) return null
+
+    const mouseFrequency = baseFrequency * Math.pow(2, closestPitch.pitch)
+    return { frequency: mouseFrequency, ...closestPitch }
   }
 
-  const { playTone, stopTone, changeTone } = useAudio()
-  const playMouseTone = () => {
-    const frequency = getFrequency()
-    console.log('playMouseTone frequency', frequency)
-    if (frequency) playTone(frequency)
+  const playMouseTone = (pressed = true) => {
+    if (!pressed) return
+    const frequency = getNote()?.frequency
+    if (frequency) {
+      if (noteToken.current) noteToken.current = playNote(frequency, noteToken.current)
+      else noteToken.current = playNote(frequency)
+    } else if (noteToken.current) {
+      stopNote(noteToken.current)
+      noteToken.current = null
+    }
   }
 
   const stopMouseTone = () => {
-    stopTone()
+    if (noteToken.current) {
+      stopNote(noteToken.current)
+      noteToken.current = null
+    }
   }
 
-  const changeMouseTone = () => {
-    const frequency = getFrequency()
-    console.log('changeMouseTone frequency', frequency)
-    if (frequency) changeTone(frequency)
-  }
+  useMouse(SVGRef, playMouseTone, stopMouseTone, playMouseTone)
 
-  useMouse(SVGRef, playMouseTone, stopMouseTone, changeMouseTone)
+  useEffect(() => () => {
+    console.log('MousePitch unmounted')
+    if (noteToken.current) {
+      stopNote(noteToken.current)
+      noteToken.current = null
+    }
+  }, [stopNote])
 
-  return getFrequency() ? <Pitch show={true} frequency={getFrequency()!} /> : null
+  const note = getNote()
+  if (!note) return null
+  const { frequency, octave } = note
+
+  const pitch = Math.log2(frequency / baseFrequency)
+
+  return frequency ? <>
+    <PitchLine pitch={pitch} octave={octave} color="white" />
+    <PitchButton frequency={frequency} isPlayable={false} />
+  </> : null
 }
 
 export default MousePitch

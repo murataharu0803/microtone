@@ -1,0 +1,58 @@
+const ATTACK = 0.001 // Attack time in seconds
+const RELEASE = 0.2 // Release time in seconds
+const TRANSITION = 0.05 // Transition time in seconds
+
+export default class Tone {
+  public frequency: number | null = null
+
+  private ctx: AudioContext
+  private osc: OscillatorNode
+  private gain: GainNode
+
+  constructor(ctx: AudioContext) {
+    this.ctx = ctx
+    this.osc = this.ctx.createOscillator()
+    this.gain = this.ctx.createGain()
+    this.osc.connect(this.gain)
+    this.gain.connect(this.ctx.destination)
+    this.gain.gain.setValueAtTime(0, this.ctx.currentTime)
+    this.osc.start()
+  }
+
+
+  public play(frequency: number) {
+    if (frequency <= 0) return
+
+    this.osc.type = 'sine'
+    this.osc.frequency.setValueAtTime(frequency, this.ctx.currentTime)
+    this.frequency = frequency
+
+    this.gain.gain.setValueAtTime(0, this.ctx.currentTime)
+    this.gain.gain.linearRampToValueAtTime(0.2, this.ctx.currentTime + ATTACK)
+  }
+
+  public change(frequency: number) {
+    if (frequency <= 0) return
+
+    this.osc.frequency.linearRampToValueAtTime(frequency, this.ctx.currentTime + TRANSITION)
+    this.frequency = frequency
+  }
+
+  public stop(callback: () => void = () => void 0) {
+    this.gain.gain.cancelScheduledValues(this.ctx.currentTime)
+    this.gain.gain.setValueAtTime(this.gain.gain.value, this.ctx.currentTime)
+    this.gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + RELEASE)
+    setTimeout(() => {
+      this.cleanup()
+      callback()
+    }, RELEASE * 1000 + 10)
+  }
+
+  private cleanup() {
+    if (this.osc) {
+      this.osc.stop()
+      this.osc.disconnect()
+    }
+    if (this.gain) this.gain.disconnect()
+  }
+}

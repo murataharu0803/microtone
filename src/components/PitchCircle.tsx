@@ -1,8 +1,13 @@
-import React, { createContext, useRef } from 'react'
+import React, { createContext, useState } from 'react'
 
 import JIPitchGroup from '@/components/JIPitchGroup'
 import MousePitch from '@/components/MousePitch'
 import TETPitchGroup from '@/components/TETPtichGroup'
+
+import { useKey } from '@/hooks/useKey'
+
+import AudioManager from '@/utils/AudioManager'
+import spiral from '@/utils/spiral'
 
 interface JIConstraint {
   maxPrime: number
@@ -12,8 +17,11 @@ interface JIConstraint {
 
 interface PitchCircleProps {
   baseFrequency: number
-  radius: number
   center: { x: number, y: number }
+  startPitch: number
+  endPitch: number
+  startRadius: number
+  radiusStep: number
   defaultOctaveShift?: number
   JIConstraint?: JIConstraint
 }
@@ -24,50 +32,79 @@ const defaultJIConstraint: JIConstraint = {
   maxDivision: 10,
 }
 
+/* eslint-disable @stylistic/indent */
 const PitchCircleContext = createContext<{
   baseFrequency: number
-  radius: number
   center: { x: number, y: number }
-  octaveShiftRef: React.RefObject<number> | null
+  startPitch: number
+  endPitch: number
+  startRadius: number
+  radiusStep: number
   JIConstraint: JIConstraint
+  audioManager: React.RefObject<AudioManager | null>
+  playNote: (frequency: number, token?: string) => string | null
+  stopNote: (token: string) => string | null
 }>({
   baseFrequency: 440 * Math.pow(2, -9 / 12), // Middle C
-  radius: 400,
   center: { x: 500, y: 500 },
-  octaveShiftRef: null,
+  startPitch: -2,
+  endPitch: 3,
+  startRadius: 150,
+  radiusStep: 400,
   JIConstraint: defaultJIConstraint,
+  audioManager: React.createRef<AudioManager>(),
+  playNote: () => null,
+  stopNote: () => null,
 })
+/* eslint-enable @stylistic/indent */
 
 const PitchCircle: React.FC<PitchCircleProps> = ({
   baseFrequency,
-  radius,
   center,
-  defaultOctaveShift = 1,
+  startPitch,
+  endPitch,
+  startRadius,
+  radiusStep,
   JIConstraint = defaultJIConstraint,
 }) => {
-  const octaveShiftRef = useRef<number>(defaultOctaveShift)
+  const [isSnapped, setIsSnapped] = useState(true)
+
+  const audioManager = React.useRef<AudioManager>(new AudioManager())
+
+  useKey(
+    'Shift',
+    () => { setIsSnapped(false); audioManager.current.stopAll() },
+    () => { setIsSnapped(true); audioManager.current.stopAll() },
+  )
+
+  const startTheta = startPitch * 2 * Math.PI - Math.PI / 2
+  const endTheta = endPitch * 2 * Math.PI - Math.PI / 2
 
   return <PitchCircleContext.Provider
     value={{
       baseFrequency,
-      radius,
       center,
-      octaveShiftRef,
+      startPitch,
+      endPitch,
+      startRadius,
+      radiusStep,
       JIConstraint,
+      audioManager,
+      playNote: audioManager.current.play.bind(audioManager.current),
+      stopNote: audioManager.current.stop.bind(audioManager.current),
     }}
   >
     <g>
-      <circle cx={center.x} cy={center.y} r={radius} fill="none" stroke="#888" />
+      <path d={spiral(center, startRadius, radiusStep, startTheta, endTheta, 0.1)} stroke="#888"/>
       <JIPitchGroup
-        showButtons={false}
         triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
       />
+      {!isSnapped && <MousePitch />}
       <TETPitchGroup
-        showButtons={true}
-        TET={12}
+        isPlayable={isSnapped}
+        TET={41}
         triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
       />
-      <MousePitch />
     </g>
   </PitchCircleContext.Provider>
 }

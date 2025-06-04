@@ -1,33 +1,28 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 export const useKey = (key: string, onDown: () => void, onUp: () => void) => {
-  const [isKeyDown, setIsKeyDown] = useState(false)
-
-  const trigger = useCallback((newKeyDown: boolean) => {
-    if (newKeyDown && !isKeyDown) {
-      setIsKeyDown(true)
-      onDown()
-    } else if (!newKeyDown && isKeyDown) {
-      setIsKeyDown(false)
-      onUp()
-    }
-  }, [onDown, onUp, isKeyDown])
+  const isKeyDown = useRef(false)
 
   const setKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === key && !e.repeat) {
-      trigger(true)
-      setIsKeyDown(true)
+    if (e.key === key && !e.repeat && !isKeyDown.current) {
+      isKeyDown.current = true
+      onDown()
     }
-  }, [key, trigger])
+  }, [key, onDown])
 
   const forceKeyUp = useCallback(() => {
-    setIsKeyDown(false)
-    onUp()
-  }, [onUp])
+    if (isKeyDown.current) {
+      onUp()
+      isKeyDown.current = false
+    }
+  }, [isKeyDown, onUp])
 
   const setKeyUp = useCallback((e: KeyboardEvent) => {
-    if (e.key === key) forceKeyUp()
-  }, [key, forceKeyUp])
+    if (e.key === key) {
+      onUp()
+      isKeyDown.current = false
+    }
+  }, [key, onUp])
 
   useEffect(() => {
     // Initial state check
@@ -40,7 +35,7 @@ export const useKey = (key: string, onDown: () => void, onUp: () => void) => {
       document.removeEventListener('keyup', setKeyUp)
       window.removeEventListener('blur', forceKeyUp)
       window.removeEventListener('focus', forceKeyUp)
-      setIsKeyDown(false) // Reset state when removing listeners
+      isKeyDown.current = false // Reset state when removing listeners
     }
   }, [setKeyDown, setKeyUp, forceKeyUp])
 }
