@@ -1,0 +1,1 @@
+html,body,#root{margin:0;padding:0;height:100%;width:100%}body{background-color:#000;color:#fff;-webkit-user-select:none;user-select:none}g.pitch-line:has(+g.pitch-button){opacity:0}g.pitch-line:has(+g.pitch-button:hover){opacity:1}
