@@ -1,3 +1,5 @@
+import { JIConstraint, NoteClass } from '@/utils/Note'
+
 export const MAX = 31
 
 export const PRIMES = [
@@ -69,11 +71,9 @@ const OVERTONES = OVERTONES_FACTORS
     }
   })
 
-export const getOvertonePitches = (
-  maxPrime: number = MAX,
-  maxFactor: number = MAX,
-  maxDivision: number = MAX,
-) => {
+export const getOvertones = (constraint: JIConstraint) => {
+  const { maxPrime, maxFactor, maxDivision } = constraint
+
   if (maxPrime > MAX || maxFactor > MAX || maxDivision > MAX)
     throw new Error(`Maximum values cannot exceed ${MAX}`)
   if (maxPrime < 2 || maxFactor < 2)
@@ -87,14 +87,12 @@ export const getOvertonePitches = (
   const divisions = filteredOvertones.filter(overtone => overtone.originalFactor <= maxDivision)
 
   const factors: {
+    noteClass: NoteClass
     factorization: number[]
-    factor: number
-    pitch: number
     color: string
   }[] = [{
+    noteClass: new NoteClass({ type: 'factor', value: 1 }),
     factorization: Array(primesCount).fill(0),
-    factor: 1,
-    pitch: 0,
     color: OVERTONES_COLORS[0],
   }]
   for (const overtone of overtones) {
@@ -103,31 +101,22 @@ export const getOvertonePitches = (
         continue // Skip if both overtone and division share any prime factor
 
       const factor = overtone.factor / division.factor
-      const pitch = (() => {
-        let cur = factor
-        while (cur < 1) cur *= 2
-        while (cur >= 2) cur /= 2
-        return Math.log2(cur)
-      })()
+      const noteClass = new NoteClass({ type: 'factor', value: factor })
 
       const factorization = overtone.factorization.map(
         (count, index) => count - division.factorization[index],
       )
-
-      const maxPrimeIndex = factorization.length - 1 - [...factorization].reverse().findIndex(
-        (count, index) => count && OVERTONES_COLORS[index],
-      )
+      const maxPrimeIndex = factorization.length - 1 - [...factorization].reverse()
+        .findIndex((count, index) => count && OVERTONES_COLORS[index])
       const color = OVERTONES_COLORS[maxPrimeIndex] || '#888888'
-
 
       factors.push({
         factorization,
-        factor,
-        pitch,
+        noteClass,
         color,
       })
     }
   }
 
-  return factors.sort((a, b) => a.pitch - b.pitch)
+  return factors.sort((a, b) => a.noteClass.pitchClass - b.noteClass.pitchClass)
 }

@@ -12,23 +12,27 @@ const SVGWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const SVGRef = React.useRef<SVGSVGElement>(null)
 
   const onMouseEvent = useCallback((e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
+    const svg = e.currentTarget
+    const point = svg.createSVGPoint()
+    point.x = e.clientX
+    point.y = e.clientY
+
+    const ctm = svg.getScreenCTM()
+    if (!ctm) return
+
+    const transformed = point.matrixTransform(ctm.inverse())
     const isLeave = e.type === 'mouseleave'
-    setPosition(
-      !isLeave ? {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      } : null,
-    )
+    setPosition(!isLeave ? { x: transformed.x, y: transformed.y } : null)
   }, [])
 
   return <svg
-    width="1000"
-    height="1000"
+    width="100%"
+    height="100%"
     viewBox="0 0 1000 1000"
     onMouseMove={onMouseEvent}
     onMouseLeave={onMouseEvent}
     ref={SVGRef}
+    preserveAspectRatio="xMidYMid meet"
   >
     <SVGContext.Provider value={{ mousePosition: position, SVGRef }}>
       {children}

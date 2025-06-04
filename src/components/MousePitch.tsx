@@ -6,6 +6,7 @@ import { SVGContext } from '@/components/SVGWithContext'
 
 import { PitchLine } from '@/components/PitchLine'
 import { useMouse } from '@/hooks/useMouse'
+import Note from '@/utils/Note'
 
 const MOUSE_SNAP = 40
 
@@ -31,7 +32,7 @@ const MousePitch: React.FC = () => {
     (_, i) => i + startOctave,
   )
 
-  const getNote = () => {
+  const getTone = () => {
     if (!mousePosition) return null
 
     const distanceToCenter = Math.sqrt(
@@ -67,7 +68,7 @@ const MousePitch: React.FC = () => {
 
   const playMouseTone = (pressed = true) => {
     if (!pressed) return
-    const frequency = getNote()?.frequency
+    const frequency = getTone()?.frequency
     if (frequency) {
       if (noteToken.current) noteToken.current = playNote(frequency, noteToken.current)
       else noteToken.current = playNote(frequency)
@@ -87,23 +88,25 @@ const MousePitch: React.FC = () => {
   useMouse(SVGRef, playMouseTone, stopMouseTone, playMouseTone)
 
   useEffect(() => () => {
-    console.log('MousePitch unmounted')
     if (noteToken.current) {
       stopNote(noteToken.current)
       noteToken.current = null
     }
   }, [stopNote])
 
-  const note = getNote()
-  if (!note) return null
-  const { frequency, octave } = note
+  const tone = getTone()
+  if (!tone) return null
 
-  const pitch = Math.log2(frequency / baseFrequency)
+  const note = new Note({
+    baseFrequency,
+    type: 'frequency',
+    value: tone.frequency,
+  })
 
-  return frequency ? <>
-    <PitchLine pitch={pitch} octave={octave} color="white" />
-    <PitchButton frequency={frequency} isPlayable={false} />
-  </> : null
+  return <>
+    <PitchLine note={note} color="white" />
+    <PitchButton note={note} isPlayable={false} />
+  </>
 }
 
 export default MousePitch

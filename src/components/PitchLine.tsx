@@ -2,40 +2,23 @@ import React, { useContext } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
 
+import Note from '@/utils/Note'
+
 interface PitchLineProps {
-  pitch: number
-  octave?: number
+  note: Note
   color: string
 }
 
-export const PitchLine: React.FC<PitchLineProps> = ({
-  pitch,
-  octave,
-  color,
-}) => {
+export const PitchLine: React.FC<PitchLineProps> = ({ note, color }) => {
   const {
     center,
     startRadius,
     radiusStep,
     startPitch,
-    endPitch,
   } = useContext(PitchCircleContext)
-
-  const angle = pitch * 2 * Math.PI - Math.PI / 2
-  const curPitch = (() => {
-    if (octave !== undefined) return pitch % 1 + octave
-    const startOctave = Math.floor(startPitch)
-    let curPitch = pitch % 1 + startOctave
-    while (curPitch + 1 <= endPitch) curPitch += 1
-    if (curPitch < startPitch) return null
-    return curPitch
-  })()
-  if (!curPitch) return null
-
-  const length = startRadius + radiusStep * (curPitch - startPitch)
-
-  const x = center.x + length * Math.cos(angle)
-  const y = center.y + length * Math.sin(angle)
+  const length = note.length(startRadius, radiusStep, startPitch)
+  const x = center.x + length * Math.cos(note.angle)
+  const y = center.y + length * Math.sin(note.angle)
 
   return <g className="pitch-line">
     <line

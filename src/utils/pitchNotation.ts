@@ -1,7 +1,7 @@
-import { getOvertonePitches, MAX, PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/prime'
+import Note, { JIConstraint } from '@/utils/Note'
+import { PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/prime'
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
-
 const ERROR_MARGIN = 0.000001
 
 export const ETNotation = (
@@ -9,80 +9,45 @@ export const ETNotation = (
   baseFrequency: number,
   ET: number | 'oct' | 'standard',
 ) => {
-  const totalSteps = typeof ET === 'number' ? ET : ET === 'oct' ? 1 : 12
+  const stepPerOctave = typeof ET === 'number' ? ET : ET === 'oct' ? 1 : 12
   const isOctave = ET === 'oct'
   const isStandard = ET === 'standard'
 
-  if (isOctave) {
-    const ratio = frequency / baseFrequency
-    const powerToTwo = Math.log2(ratio)
-    const octaveShift = Math.floor(powerToTwo)
-    const normalizedPitch = powerToTwo - octaveShift
-    return `${octaveShift + 4}+${normalizedPitch.toFixed(4).replace('0.', '')}`
-  }
+  const note = new Note({
+    baseFrequency,
+    type: 'frequency',
+    value: frequency,
+  })
+  const { stepClass, error } = note.quantizeToET(ET)
 
-  const ratio = frequency / baseFrequency
-  const step = Math.log2(ratio) * totalSteps
-  const quantizedStep = Math.round(step)
-  const error = step - quantizedStep
-  const octaveShift = Math.floor(quantizedStep / totalSteps)
-  const normalizedQuantizedStep = quantizedStep - octaveShift * totalSteps
+  if (isOctave) return `${note.octave + 4}+${note.pitchClass.toFixed(4).replace('0.', '')}`
 
-  const errorString =
-    error > ERROR_MARGIN
-      ? `+${error.toFixed(3).replace('0.', '.')}`
-      : error < -ERROR_MARGIN
-        ? `-${Math.abs(error).toFixed(3).replace('0.', '.')}`
-        : ''
+  const errorString = error > ERROR_MARGIN ? `+${error.toFixed(3).replace('0.', '.')}` :
+    error < -ERROR_MARGIN ? `-${Math.abs(error).toFixed(3).replace('0.', '.')}` : ''
 
   if (isStandard) {
-    const noteIndex = normalizedQuantizedStep % 12
-    const note = NOTES[noteIndex]
-
-    return `${note}${octaveShift + 4}${errorString}`
+    const noteIndex = stepClass % 12
+    const noteStr = NOTES[noteIndex]
+    return `${noteStr}${note.octave + 4}${errorString}`
   }
 
-  const pitchString =
-    octaveShift > 0
-      ? `${normalizedQuantizedStep}${'\''.repeat(octaveShift)}`
-      : `${normalizedQuantizedStep}${','.repeat(-octaveShift)}`
+  const pitchString = note.octave > 0
+    ? `${stepClass}${'\''.repeat(note.octave)}`
+    : `${stepClass}${','.repeat(-note.octave)}`
 
-  return `${pitchString}${errorString}/${totalSteps}ET`
+  return `${pitchString}${errorString}/${stepPerOctave}ET`
 }
 
 export const JINotation = (
   frequency: number,
   baseFrequency: number,
-  maxPrime: number = MAX,
-  maxFactor: number = MAX,
-  maxDivision: number = MAX,
+  constraint: JIConstraint,
 ) => {
-  const pitches = getOvertonePitches(
-    maxPrime,
-    maxFactor,
-    maxDivision,
-  )
+  const note = new Note({ baseFrequency, type: 'factor', value: frequency / baseFrequency })
+  const { factorization, error } = note.quantizeToJI(constraint)
 
-  const factor = frequency / baseFrequency
-  const octaveShift = Math.floor(Math.log2(factor))
-  const pitch = Math.log2(factor) - octaveShift
-
-  const chooseClose = (num: number) => {
-    const abs = Math.abs(num) % 1
-    return abs > 0.5 ? 1 - abs : abs
-  }
-  const closestPitch = pitches.reduce((closest, current) => {
-    const closestDiff = chooseClose(closest.pitch - pitch)
-    const currentDiff = chooseClose(current.pitch - pitch)
-    return currentDiff < closestDiff ? current : closest
-  })
-
-  const factorization = closestPitch.factorization
-  let text = octaveShift > 0
-    ? '>'.repeat(octaveShift)
-    : octaveShift < 0
-      ? '<'.repeat(-octaveShift) : ''
-
+  let text = note.octave > 0 ? '>'.repeat(note.octave) :
+    note.octave < 0 ? '<'.repeat(-note.octave) : ''
   for (let i = 0; i < factorization.length; i++) {
     const count = factorization[i]
     if (count === 0) continue
@@ -91,13 +56,8 @@ export const JINotation = (
   }
   if (text === '') text = '.'
 
-  const error = pitch - closestPitch.pitch
-  const errorString =
-    error > ERROR_MARGIN
-      ? `+${error.toFixed(4).replace('0.', '')}`
-      : error < -ERROR_MARGIN
-        ? `-${Math.abs(error).toFixed(4).replace('0.', '')}`
-        : ''
+  const errorString = error > ERROR_MARGIN ? `+${error.toFixed(4).replace('0.', '')}` :
+    error < -ERROR_MARGIN ? `-${Math.abs(error).toFixed(4).replace('0.', '')}` : ''
 
   return text + errorString
 }

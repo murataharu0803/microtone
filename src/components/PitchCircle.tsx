@@ -1,19 +1,16 @@
 import React, { createContext, useState } from 'react'
 
+import CenterDisplay from '@/components/CenterDisplay'
 import JIPitchGroup from '@/components/JIPitchGroup'
 import MousePitch from '@/components/MousePitch'
 import TETPitchGroup from '@/components/TETPtichGroup'
 
 import { useKey } from '@/hooks/useKey'
 
-import AudioManager from '@/utils/AudioManager'
-import spiral from '@/utils/spiral'
 
-interface JIConstraint {
-  maxPrime: number
-  maxFactor: number
-  maxDivision: number
-}
+import AudioManager from '@/utils/AudioManager'
+import { JIConstraint } from '@/utils/Note'
+import spiral from '@/utils/spiral'
 
 interface PitchCircleProps {
   baseFrequency: number
@@ -102,9 +99,10 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       {!isSnapped && <MousePitch />}
       <TETPitchGroup
         isPlayable={isSnapped}
-        TET={41}
+        TET={12}
         triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
       />
+      <CenterDisplay />
     </g>
   </PitchCircleContext.Provider>
 }

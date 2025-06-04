@@ -39,6 +39,7 @@ export default class Tone {
   }
 
   public stop(callback: () => void = () => void 0) {
+    this.frequency = null
     this.gain.gain.cancelScheduledValues(this.ctx.currentTime)
     this.gain.gain.setValueAtTime(this.gain.gain.value, this.ctx.currentTime)
     this.gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + RELEASE)

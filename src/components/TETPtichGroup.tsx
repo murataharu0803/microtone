@@ -3,6 +3,8 @@ import React, { useContext } from 'react'
 import PitchButton from '@/components/PitchButton'
 import { PitchCircleContext } from '@/components/PitchCircle'
 import { PitchLine } from '@/components/PitchLine'
+import Note, { NoteClass } from '@/utils/Note'
+import { findFurthest } from '@/utils/math'
 
 interface TETPitchGroupProps {
   isPlayable?: boolean
@@ -21,49 +23,41 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
     endPitch,
   } = useContext(PitchCircleContext)
 
-  const startOctave = Math.floor(startPitch)
-  const endOctave = Math.ceil(endPitch)
   const octaves = Array.from(
-    { length: endOctave - startOctave + 1 },
-    (_, i) => i + startOctave,
+    { length: Math.ceil(endPitch) - Math.floor(startPitch) + 1 },
+    (_, i) => i + Math.floor(startPitch),
   )
-
   const tones = Array.from({ length: TET }, (_, step) => ({
-    pitch: step / TET,
+    noteClass: new NoteClass({ type: 'pitch', value: step / TET }),
     step,
   }))
 
   const allTones = tones.map(tone =>
     octaves.map(octave => ({
-      ...tone,
-      octave,
-      frequency: baseFrequency * Math.pow(2, octave + tone.pitch),
+      step: tone.step,
+      note: new Note({ baseFrequency, type: 'pitch', value: tone.noteClass.pitchClass + octave }),
       triggerKey: octave === 1 ? triggerKeys[tone.step] : null,
-    })).filter(tone =>
-      tone.pitch + tone.octave >= startPitch && tone.pitch + tone.octave <= endPitch,
-    ),
+    })).filter(tone => tone.note.pitch >= startPitch && tone.note.pitch <= endPitch),
   ).flat()
 
   return <g style={{ opacity: isPlayable ? 1 : 0.5 }}>
     {tones.map(tone => {
-      return <PitchLine
-        key={`${TET}-TET-${tone.step}`}
-        pitch={tone.pitch}
-        color="#888888"
-      />
+      const note = findFurthest(
+        allTones.filter(t => t.step === tone.step),
+        t => t.note.pitch,
+      ).note
+      return <PitchLine key={`${TET}-TET-${tone.step}`} note={note} color="#888888" />
     })}
-    {allTones.reverse().map(tone => <g key={tone.octave + tone.pitch}>
-      {isPlayable && <PitchLine
-        pitch={tone.pitch}
-        octave={tone.octave}
-        color="#888888"
-      />}
-      <PitchButton
-        isPlayable={isPlayable}
-        frequency={tone.frequency}
-        triggerKey={tone.triggerKey}
-      />
-    </g>)}
+    {allTones.reverse().map(tone =>
+      <g key={tone.note.octave + tone.note.pitch}>
+        {isPlayable && <PitchLine note={tone.note} color="#888888" />}
+        <PitchButton
+          isPlayable={isPlayable}
+          note={tone.note}
+          triggerKey={tone.triggerKey}
+        />
+      </g>,
+    )}
   </g>
 }
 
