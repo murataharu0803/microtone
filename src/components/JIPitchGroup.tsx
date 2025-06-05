@@ -51,7 +51,7 @@ const JIPitchGroup: React.FC<JIPitchGroupProps> = ({
     })}
     {isPlayable && allTones.reverse().map(tone =>
       <g key={tone.note.octave + tone.note.pitch}>
-        {isPlayable && <PitchLine note={tone.note} color={tone.color} />}
+        {/* {isPlayable && <PitchLine note={tone.note} color={tone.color} />} */}
         <PitchButton
           isPlayable={isPlayable}
           note={tone.note}

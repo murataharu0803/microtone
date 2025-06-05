@@ -89,10 +89,12 @@ export const getOvertones = (constraint: JIConstraint) => {
   const factors: {
     noteClass: NoteClass
     factorization: number[]
+    maxPrime: number
     color: string
   }[] = [{
     noteClass: new NoteClass({ type: 'factor', value: 1 }),
     factorization: Array(primesCount).fill(0),
+    maxPrime: 0,
     color: OVERTONES_COLORS[0],
   }]
   for (const overtone of overtones) {
@@ -113,6 +115,7 @@ export const getOvertones = (constraint: JIConstraint) => {
       factors.push({
         factorization,
         noteClass,
+        maxPrime: PRIMES[maxPrimeIndex],
         color,
       })
     }

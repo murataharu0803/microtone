@@ -9,10 +9,11 @@ import { SVGContext } from '@/components/SVGWithContext'
 import { useMouse } from '@/hooks/useMouse'
 
 import Note from '@/utils/Note'
+import { distance } from '@/utils/math'
 
 const MOUSE_SNAP = 40
 
-const MousePitch: React.FC = () => {
+const PitchCircleMouse: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
   const {
     center,
@@ -39,11 +40,7 @@ const MousePitch: React.FC = () => {
   const getTone = () => {
     if (!mousePosition) return null
 
-    const distanceToCenter = Math.sqrt(
-      Math.pow(mousePosition.x - center.x, 2) +
-      Math.pow(mousePosition.y - center.y, 2),
-    )
-
+    const distanceToCenter = distance(mousePosition, center)
     const mouseAngle =
       Math.atan2(mousePosition.y - center.y, mousePosition.x - center.x) + 5 * Math.PI / 2
     const mouseNormalizedPitch = mouseAngle / (2 * Math.PI) % 1
@@ -113,4 +110,4 @@ const MousePitch: React.FC = () => {
   </>
 }
 
-export default MousePitch
+export default PitchCircleMouse

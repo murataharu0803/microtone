@@ -2,8 +2,8 @@ import React, { createContext, useState } from 'react'
 
 import CenterDisplay from '@/components/CenterDisplay'
 import JIPitchGroup from '@/components/JIPitchGroup'
-import MousePitch from '@/components/MousePitch'
 import NoteIndicator from '@/components/NoteIndicator'
+import PitchCircleMouse from '@/components/PitchCircleMouse'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import TETPitchGroup from '@/components/TETPtichGroup'
 
@@ -24,12 +24,10 @@ const PitchCircleContext = createContext<{
   center: { x: number, y: number }
   startRadius: number
   radiusStep: number
-  audioManager: React.RefObject<AudioManager | null>
 }>({
   center: { x: 500, y: 500 },
   startRadius: 150,
   radiusStep: 400,
-  audioManager: React.createRef<AudioManager>(),
 })
 
 
@@ -65,7 +63,6 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       center,
       startRadius,
       radiusStep,
-      audioManager,
     }}
   >
     <g>
@@ -75,7 +72,7 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
         isPlayable={isSnapped && snapToJI}
         triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
       />
-      {!isSnapped && <MousePitch />}
+      {!isSnapped && <PitchCircleMouse />}
       <TETPitchGroup
         isPlayable={isSnapped && !snapToJI}
         TET={12}

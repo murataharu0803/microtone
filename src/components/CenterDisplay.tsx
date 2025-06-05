@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
@@ -44,16 +44,19 @@ const FrequencyDisplay: React.FC<{ note: Note }> = ({ note }) => {
 }
 
 const CenterDisplay: React.FC = () => {
-  const { audioManager, center } = useContext(PitchCircleContext)
-  const { baseFrequency } = useContext(PitchVisualizeSystemContext)
+  const { center } = useContext(PitchCircleContext)
+  const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)
 
   const [frequencies, setFrequencies] = React.useState<number[]>(
     audioManager.current?.frequencyList || [],
   )
 
-  audioManager.current?.subscribe(
-    () => setFrequencies(audioManager.current?.frequencyList || []),
-  )
+  useEffect(() => {
+    const removeSubscription = audioManager.current?.subscribe(
+      () => setFrequencies(audioManager.current?.frequencyList || []),
+    )
+    return () => { removeSubscription?.() }
+  }, [audioManager])
 
   return <g
     fontSize="10"

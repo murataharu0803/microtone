@@ -49,14 +49,12 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
       return <PitchLine key={`${TET}-TET-${tone.step}`} note={note} color="#888888" />
     })}
     {isPlayable && allTones.reverse().map(tone =>
-      <g key={tone.note.octave + tone.note.pitch}>
-        {isPlayable && <PitchLine note={tone.note} color="#888888" />}
-        <PitchButton
-          isPlayable={isPlayable}
-          note={tone.note}
-          triggerKey={tone.triggerKey}
-        />
-      </g>,
+      <PitchButton
+        key={tone.note.octave + tone.note.pitch}
+        isPlayable={isPlayable}
+        note={tone.note}
+        triggerKey={tone.triggerKey}
+      />,
     )}
   </g>
 }

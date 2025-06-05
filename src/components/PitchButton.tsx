@@ -1,4 +1,4 @@
-import React, { RefObject, useContext, useRef } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
 import { PitchLine } from '@/components/PitchLine'
@@ -20,36 +20,37 @@ const PlayableWrapper: React.FC<PlayableWrapperProps> = ({ note, triggerKey, chi
   const { playNote, stopNote } = useContext(PitchVisualizeSystemContext)
 
   const buttonRef = useRef<SVGCircleElement>(null)
-  const mouseNoteToken = useRef<string | null>(null)
-  const keyNoteToken = useRef<string | null>(null)
+  const mouseNoteState = useState<string | null>(null)
+  const keyNoteState = useState<string | null>(null)
 
-  const play = (ref: RefObject<string | null>) => {
-    if (ref.current) ref.current = playNote(note.frequency, ref.current)
-    else ref.current = playNote(note.frequency)
+  const play = (state: typeof mouseNoteState) => {
+    const [value, setValue] = state
+    if (value) setValue(playNote(note.frequency, value))
+    else setValue(playNote(note.frequency))
   }
 
-  const stop = (ref: RefObject<string | null>) => {
-    if (ref.current) {
-      stopNote(ref.current)
-      ref.current = null
+  const stop = (state: typeof mouseNoteState) => {
+    const [value, setValue] = state
+    if (value) {
+      stopNote(value)
+      setValue(null)
     }
   }
 
-  const mouseStartPlaying = () => play(mouseNoteToken)
-  const mouseStopPlaying = () => stop(mouseNoteToken)
-  const keyStartPlaying = () => play(keyNoteToken)
-  const keyStopPlaying = () => stop(keyNoteToken)
+  const mouseStartPlaying = () => play(mouseNoteState)
+  const mouseStopPlaying = () => stop(mouseNoteState)
+  const keyStartPlaying = () => play(keyNoteState)
+  const keyStopPlaying = () => stop(keyNoteState)
 
   useMouse(buttonRef, mouseStartPlaying, mouseStopPlaying)
   useKey(triggerKey || '', keyStartPlaying, keyStopPlaying)
 
-  return <g className="pitch-button" ref={buttonRef}>
-    {mouseNoteToken.current && keyNoteToken.current &&
+  return <g ref={buttonRef}>
+    {(mouseNoteState[0] || keyNoteState[0]) &&
       <PitchLine note={note} color="white" />
     }{children}
   </g>
 }
-
 
 
 interface PitchLineProps {
@@ -76,11 +77,21 @@ const PitchButton: React.FC<PitchLineProps> = ({
   const x = center.x + length * Math.cos(note.angle)
   const y = center.y + length * Math.sin(note.angle)
 
-  const circle = <g><circle cx={x} cy={y} r={5} fill={color} style={{ cursor: 'pointer' }} /></g>
+  const circle = <>
+    <PitchLine note={note} color="white" />
+    <circle
+      className="pitch-button"
+      cx={x}
+      cy={y}
+      r={5}
+      fill={color}
+      style={{ cursor: 'pointer' }}
+    />
+  </>
 
   return isPlayable
     ? <PlayableWrapper note={note} triggerKey={triggerKey}>{circle}</PlayableWrapper>
-    : circle
+    : <g>{circle}</g>
 }
 
 export default PitchButton

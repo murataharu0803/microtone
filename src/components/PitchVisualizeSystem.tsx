@@ -2,6 +2,7 @@ import React, { createContext } from 'react'
 
 import PitchCircle from '@/components/PitchCircle'
 
+import PitchLadder from '@/components/PitchLadder'
 import AudioManager from '@/utils/AudioManager'
 import { JIConstraint } from '@/utils/Note'
 
@@ -15,8 +16,8 @@ interface PitchVisualizeSystemProps {
 
 const defaultJIConstraint: JIConstraint = {
   maxPrime: 13,
-  maxFactor: 15,
-  maxDivision: 10,
+  maxFactor: 25,
+  maxDivision: 3,
 }
 
 /* eslint-disable @stylistic/indent */
@@ -59,9 +60,14 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
     }}
   >
     <PitchCircle
-      center={{ x: 500, y: 500 }}
+      center={{ x: 720, y: 540 }}
       startRadius={250}
       radiusStep={50}
+    />
+    <PitchLadder
+      startPoint={{ x: 1400, y: 980 }}
+      endPoint={{ x: 1400, y: 100 }}
+      width={200}
     />
   </PitchVisualizeSystemContext.Provider>
 }

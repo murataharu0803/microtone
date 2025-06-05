@@ -18,14 +18,13 @@ export const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 })
   const x = center.x + length * Math.cos(note.angle)
   const y = center.y + length * Math.sin(note.angle)
 
-  return <g className="pitch-line">
-    <line
-      x1={center.x}
-      y1={center.y}
-      x2={x}
-      y2={y}
-      stroke={color}
-      strokeWidth={width}
-    />
-  </g>
+  return <line
+    className="pitch-line"
+    x1={center.x}
+    y1={center.y}
+    x2={x}
+    y2={y}
+    stroke={color}
+    strokeWidth={width}
+  />
 }

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect } from 'react'
 
-import { PitchLine } from '@/components/PitchLine'
+import PitchLadderLineLine from '@/components/PitchLadderLineLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'
 
-const NoteIndicator: React.FC = () => {
+const LadderNoteIndicator: React.FC = () => {
   const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)
 
   const [frequencies, setFrequencies] = React.useState<number[]>(
@@ -26,14 +26,14 @@ const NoteIndicator: React.FC = () => {
   >
     {frequencies.map((frequency, index) =>
       <React.Fragment key={`${index}-${frequency}`}>
-        <PitchLine
+        <PitchLadderLineLine
           note={new Note({ baseFrequency, type: 'frequency', value: frequency })}
           color="white"
-          width={1}
+          shrink={-0.2}
         />
       </React.Fragment>,
     )}
   </g>
 }
 
-export default NoteIndicator
+export default LadderNoteIndicator

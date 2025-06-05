@@ -27,22 +27,23 @@ export default class AudioManager {
 
   public change(frequency: number, token: string) {
     const tone = this.tones.get(token)
-    if (tone) tone.change(frequency)
+    if (!tone) return null
+    tone.change(frequency)
     this.emitChange()
-    return tone ? token : null
+    return token
   }
 
   public stop(token: string) {
     const tone = this.tones.get(token)
-    if (tone) tone.stop(() => this.tones.delete(token))
+    if (!tone) return null
+    tone.stop(() => this.tones.delete(token))
     this.emitChange()
-    return tone ? token : null
+    return token
   }
 
   public stopAll() {
-    this.tones.forEach((tone, token) => {
-      tone.stop(() => this.tones.delete(token))
-    })
+    this.tones.forEach(tone => { tone.stop() })
+    this.tones.clear()
     this.emitChange()
   }
 
