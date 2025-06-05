@@ -3,68 +3,43 @@ import React, { createContext, useState } from 'react'
 import CenterDisplay from '@/components/CenterDisplay'
 import JIPitchGroup from '@/components/JIPitchGroup'
 import MousePitch from '@/components/MousePitch'
+import NoteIndicator from '@/components/NoteIndicator'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import TETPitchGroup from '@/components/TETPtichGroup'
 
 import { useKey } from '@/hooks/useKey'
 
-
-import NoteIndicator from '@/components/NoteIndicator'
 import AudioManager from '@/utils/AudioManager'
-import { JIConstraint } from '@/utils/Note'
 import spiral from '@/utils/spiral'
 
 interface PitchCircleProps {
-  baseFrequency: number
   center: { x: number, y: number }
-  startPitch: number
-  endPitch: number
   startRadius: number
   radiusStep: number
   defaultOctaveShift?: number
-  JIConstraint?: JIConstraint
 }
 
-const defaultJIConstraint: JIConstraint = {
-  maxPrime: 13,
-  maxFactor: 15,
-  maxDivision: 10,
-}
 
-/* eslint-disable @stylistic/indent */
 const PitchCircleContext = createContext<{
-  baseFrequency: number
   center: { x: number, y: number }
-  startPitch: number
-  endPitch: number
   startRadius: number
   radiusStep: number
-  JIConstraint: JIConstraint
   audioManager: React.RefObject<AudioManager | null>
-  playNote: (frequency: number, token?: string) => string | null
-  stopNote: (token: string) => string | null
 }>({
-  baseFrequency: 440 * Math.pow(2, -9 / 12), // Middle C
   center: { x: 500, y: 500 },
-  startPitch: -2,
-  endPitch: 3,
   startRadius: 150,
   radiusStep: 400,
-  JIConstraint: defaultJIConstraint,
   audioManager: React.createRef<AudioManager>(),
-  playNote: () => null,
-  stopNote: () => null,
 })
-/* eslint-enable @stylistic/indent */
+
 
 const PitchCircle: React.FC<PitchCircleProps> = ({
-  baseFrequency,
   center,
-  startPitch,
-  endPitch,
   startRadius,
   radiusStep,
-  JIConstraint = defaultJIConstraint,
 }) => {
+  const { startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
+
   const [isSnapped, setIsSnapped] = useState(true)
   const [snapToJI, setSnapToJI] = useState(false)
 
@@ -87,16 +62,10 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
 
   return <PitchCircleContext.Provider
     value={{
-      baseFrequency,
       center,
-      startPitch,
-      endPitch,
       startRadius,
       radiusStep,
-      JIConstraint,
       audioManager,
-      playNote: audioManager.current.play.bind(audioManager.current),
-      stopNote: audioManager.current.stop.bind(audioManager.current),
     }}
   >
     <g>

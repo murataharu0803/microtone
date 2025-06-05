@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useRef } from 'react'
 
 import PitchButton from '@/components/PitchButton'
 import { PitchCircleContext } from '@/components/PitchCircle'
+import { PitchLine } from '@/components/PitchLine'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import { SVGContext } from '@/components/SVGWithContext'
 
-import { PitchLine } from '@/components/PitchLine'
 import { useMouse } from '@/hooks/useMouse'
+
 import Note from '@/utils/Note'
 
 const MOUSE_SNAP = 40
@@ -13,15 +15,17 @@ const MOUSE_SNAP = 40
 const MousePitch: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
   const {
-    baseFrequency,
     center,
-    startPitch,
-    endPitch,
     startRadius,
     radiusStep,
+  } = useContext(PitchCircleContext)
+  const {
+    baseFrequency,
+    startPitch,
+    endPitch,
     playNote,
     stopNote,
-  } = useContext(PitchCircleContext)
+  } = useContext(PitchVisualizeSystemContext)
 
   const noteToken = useRef<string | null>(null)
 

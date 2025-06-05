@@ -1,8 +1,8 @@
 import React, { RefObject, useContext, useRef } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
-
 import { PitchLine } from '@/components/PitchLine'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import { useKey } from '@/hooks/useKey'
 import { useMouse } from '@/hooks/useMouse'
@@ -17,7 +17,7 @@ interface PlayableWrapperProps {
 }
 
 const PlayableWrapper: React.FC<PlayableWrapperProps> = ({ note, triggerKey, children }) => {
-  const { playNote, stopNote } = useContext(PitchCircleContext)
+  const { playNote, stopNote } = useContext(PitchVisualizeSystemContext)
 
   const buttonRef = useRef<SVGCircleElement>(null)
   const mouseNoteToken = useRef<string | null>(null)
@@ -69,8 +69,8 @@ const PitchButton: React.FC<PitchLineProps> = ({
     center,
     startRadius,
     radiusStep,
-    startPitch,
   } = useContext(PitchCircleContext)
+  const { startPitch } = useContext(PitchVisualizeSystemContext)
 
   const length = note.length(startRadius, radiusStep, startPitch)
   const x = center.x + length * Math.cos(note.angle)

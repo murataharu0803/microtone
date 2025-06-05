@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'
 
@@ -11,12 +12,8 @@ interface PitchLineProps {
 }
 
 export const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 }) => {
-  const {
-    center,
-    startRadius,
-    radiusStep,
-    startPitch,
-  } = useContext(PitchCircleContext)
+  const { center, startRadius, radiusStep } = useContext(PitchCircleContext)
+  const { startPitch } = useContext(PitchVisualizeSystemContext)
   const length = note.length(startRadius, radiusStep, startPitch)
   const x = center.x + length * Math.cos(note.angle)
   const y = center.y + length * Math.sin(note.angle)

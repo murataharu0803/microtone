@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 
 import PitchButton from '@/components/PitchButton'
-import { PitchCircleContext } from '@/components/PitchCircle'
 import { PitchLine } from '@/components/PitchLine'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import Note, { NoteClass } from '@/utils/Note'
 import { findFurthest } from '@/utils/math'
 
@@ -21,7 +21,7 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
     baseFrequency,
     startPitch,
     endPitch,
-  } = useContext(PitchCircleContext)
+  } = useContext(PitchVisualizeSystemContext)
 
   const octaves = Array.from(
     { length: Math.ceil(endPitch) - Math.floor(startPitch) + 1 },

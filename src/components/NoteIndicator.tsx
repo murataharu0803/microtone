@@ -1,13 +1,14 @@
 import React, { useContext } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
-
 import { PitchLine } from '@/components/PitchLine'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+
 import Note from '@/utils/Note'
 
-
 const NoteIndicator: React.FC = () => {
-  const { audioManager, baseFrequency } = useContext(PitchCircleContext)
+  const { audioManager } = useContext(PitchCircleContext)
+  const { baseFrequency } = useContext(PitchVisualizeSystemContext)
 
   const [frequencies, setFrequencies] = React.useState<number[]>(
     audioManager.current?.frequencyList || [],

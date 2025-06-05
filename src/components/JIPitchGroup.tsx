@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 
 import PitchButton from '@/components/PitchButton'
-import { PitchCircleContext } from '@/components/PitchCircle'
 import { PitchLine } from '@/components/PitchLine'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'
 import { findFurthest } from '@/utils/math'
@@ -18,7 +18,12 @@ const JIPitchGroup: React.FC<JIPitchGroupProps> = ({
   isPlayable = true,
   triggerKeys = [],
 }) => {
-  const { JIConstraint, baseFrequency, startPitch, endPitch } = useContext(PitchCircleContext)
+  const {
+    JIConstraint,
+    baseFrequency,
+    startPitch,
+    endPitch,
+  } = useContext(PitchVisualizeSystemContext)
 
   const tones = getOvertones(JIConstraint)
   const octaves = Array.from(

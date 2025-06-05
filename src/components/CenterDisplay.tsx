@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 
 import { PitchCircleContext } from '@/components/PitchCircle'
+import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'
 import { ETNotation, JINotation } from '@/utils/pitchNotation'
@@ -10,7 +11,8 @@ const FONT_SIZE = 16
 const LINE_HEIGHT = 32
 
 const FrequencyDisplay: React.FC<{ note: Note }> = ({ note }) => {
-  const { center, baseFrequency, JIConstraint } = useContext(PitchCircleContext)
+  const { center } = useContext(PitchCircleContext)
+  const { baseFrequency, JIConstraint } = useContext(PitchVisualizeSystemContext)
   const frequency = note.frequency
 
   return <g
@@ -42,7 +44,8 @@ const FrequencyDisplay: React.FC<{ note: Note }> = ({ note }) => {
 }
 
 const CenterDisplay: React.FC = () => {
-  const { audioManager, center, baseFrequency } = useContext(PitchCircleContext)
+  const { audioManager, center } = useContext(PitchCircleContext)
+  const { baseFrequency } = useContext(PitchVisualizeSystemContext)
 
   const [frequencies, setFrequencies] = React.useState<number[]>(
     audioManager.current?.frequencyList || [],
