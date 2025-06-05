@@ -2,7 +2,7 @@ import Note, { JIConstraint } from '@/utils/Note'
 import { PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/prime'
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
-const ERROR_MARGIN = 0.000001
+export const ERROR_MARGIN = 0.000001
 
 export const ETNotation = (
   frequency: number,

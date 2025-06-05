@@ -7,9 +7,10 @@ import Note from '@/utils/Note'
 interface PitchLineProps {
   note: Note
   color: string
+  width?: number
 }
 
-export const PitchLine: React.FC<PitchLineProps> = ({ note, color }) => {
+export const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 }) => {
   const {
     center,
     startRadius,
@@ -27,7 +28,7 @@ export const PitchLine: React.FC<PitchLineProps> = ({ note, color }) => {
       x2={x}
       y2={y}
       stroke={color}
-      strokeWidth={0.5}
+      strokeWidth={width}
     />
   </g>
 }

@@ -8,6 +8,7 @@ import TETPitchGroup from '@/components/TETPtichGroup'
 import { useKey } from '@/hooks/useKey'
 
 
+import NoteIndicator from '@/components/NoteIndicator'
 import AudioManager from '@/utils/AudioManager'
 import { JIConstraint } from '@/utils/Note'
 import spiral from '@/utils/spiral'
@@ -65,6 +66,7 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
   JIConstraint = defaultJIConstraint,
 }) => {
   const [isSnapped, setIsSnapped] = useState(true)
+  const [snapToJI, setSnapToJI] = useState(false)
 
   const audioManager = React.useRef<AudioManager>(new AudioManager())
 
@@ -72,6 +74,12 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
     'Shift',
     () => { setIsSnapped(false); audioManager.current.stopAll() },
     () => { setIsSnapped(true); audioManager.current.stopAll() },
+  )
+
+  useKey(
+    'Control',
+    () => { setSnapToJI(true); audioManager.current.stopAll() },
+    () => { setSnapToJI(false); audioManager.current.stopAll() },
   )
 
   const startTheta = startPitch * 2 * Math.PI - Math.PI / 2
@@ -93,12 +101,14 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
   >
     <g>
       <path d={spiral(center, startRadius, radiusStep, startTheta, endTheta, 0.1)} stroke="#888"/>
+      <NoteIndicator />
       <JIPitchGroup
+        isPlayable={isSnapped && snapToJI}
         triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
       />
       {!isSnapped && <MousePitch />}
       <TETPitchGroup
-        isPlayable={isSnapped}
+        isPlayable={isSnapped && !snapToJI}
         TET={12}
         triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
       />

@@ -40,7 +40,7 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
     })).filter(tone => tone.note.pitch >= startPitch && tone.note.pitch <= endPitch),
   ).flat()
 
-  return <g style={{ opacity: isPlayable ? 1 : 0.5 }}>
+  return <g>
     {tones.map(tone => {
       const note = findFurthest(
         allTones.filter(t => t.step === tone.step),
@@ -48,7 +48,7 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
       ).note
       return <PitchLine key={`${TET}-TET-${tone.step}`} note={note} color="#888888" />
     })}
-    {allTones.reverse().map(tone =>
+    {isPlayable && allTones.reverse().map(tone =>
       <g key={tone.note.octave + tone.note.pitch}>
         {isPlayable && <PitchLine note={tone.note} color="#888888" />}
         <PitchButton

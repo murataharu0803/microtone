@@ -55,10 +55,16 @@ const PlayableWrapper: React.FC<PlayableWrapperProps> = ({ note, triggerKey, chi
 interface PitchLineProps {
   isPlayable?: boolean
   note: Note
+  color?: string
   triggerKey?: string | null
 }
 
-const PitchButton: React.FC<PitchLineProps> = ({ isPlayable = true, note, triggerKey }) => {
+const PitchButton: React.FC<PitchLineProps> = ({
+  isPlayable = true,
+  note,
+  color = 'white',
+  triggerKey,
+}) => {
   const {
     center,
     startRadius,
@@ -70,7 +76,7 @@ const PitchButton: React.FC<PitchLineProps> = ({ isPlayable = true, note, trigge
   const x = center.x + length * Math.cos(note.angle)
   const y = center.y + length * Math.sin(note.angle)
 
-  const circle = <g><circle cx={x} cy={y} r={5} fill="white" style={{ cursor: 'pointer' }} /></g>
+  const circle = <g><circle cx={x} cy={y} r={5} fill={color} style={{ cursor: 'pointer' }} /></g>
 
   return isPlayable
     ? <PlayableWrapper note={note} triggerKey={triggerKey}>{circle}</PlayableWrapper>
