@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 
-import { PitchLine } from '@/components/PitchLine'
+import { PitchLine } from '@/components/circle/PitchLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'

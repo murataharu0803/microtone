@@ -1,11 +1,11 @@
 import React, { createContext, useState } from 'react'
 
-import CenterDisplay from '@/components/CenterDisplay'
-import JIPitchGroup from '@/components/JIPitchGroup'
-import NoteIndicator from '@/components/NoteIndicator'
-import PitchCircleMouse from '@/components/PitchCircleMouse'
+import CenterDisplay from '@/components/circle/CenterDisplay'
+import JIPitchGroup from '@/components/circle/JIPitchGroup'
+import NoteIndicator from '@/components/circle/NoteIndicator'
+import PitchCircleMouse from '@/components/circle/PitchCircleMouse'
+import TETPitchGroup from '@/components/circle/TETPtichGroup'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
-import TETPitchGroup from '@/components/TETPtichGroup'
 
 import { useKey } from '@/hooks/useKey'
 

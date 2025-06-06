@@ -1,7 +1,7 @@
 import React from 'react'
 
+import PitchLadderLine from '@/components/ladder/PitchLadderLine'
 
-import PitchLadderLine from '@/components/PitchLadderLine'
 import Note from '@/utils/Note'
 
 interface PitchLadderSetProps {

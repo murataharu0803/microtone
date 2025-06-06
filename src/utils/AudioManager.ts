@@ -1,6 +1,5 @@
 import Tone from '@/utils/Tone'
 
-
 export default class AudioManager {
   private ctx: AudioContext
   private tones: Map<string, Tone>

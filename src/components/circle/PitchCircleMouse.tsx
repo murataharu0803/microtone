@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
-import PitchButton from '@/components/PitchButton'
-import { PitchCircleContext } from '@/components/PitchCircle'
-import { PitchLine } from '@/components/PitchLine'
+import PitchButton from '@/components/circle/PitchButton'
+import { PitchCircleContext } from '@/components/circle/PitchCircle'
+import { PitchLine } from '@/components/circle/PitchLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import { SVGContext } from '@/components/SVGWithContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
-import Note from '@/utils/Note'
 import { distance } from '@/utils/math'
+import Note from '@/utils/Note'
 
 const MOUSE_SNAP = 40
 

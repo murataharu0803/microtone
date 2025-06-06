@@ -1,8 +1,8 @@
 import React, { createContext } from 'react'
 
-import PitchCircle from '@/components/PitchCircle'
+import PitchCircle from '@/components/circle/PitchCircle'
+import PitchLadder from '@/components/ladder/PitchLadder'
 
-import PitchLadder from '@/components/PitchLadder'
 import AudioManager from '@/utils/AudioManager'
 import { JIConstraint } from '@/utils/Note'
 

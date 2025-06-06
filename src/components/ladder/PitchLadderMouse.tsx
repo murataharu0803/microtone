@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
-import { PitchLadderContext } from '@/components/PitchLadder'
-import PitchLadderLine from '@/components/PitchLadderLine'
+import { PitchLadderContext } from '@/components/ladder/PitchLadder'
+import PitchLadderLine from '@/components/ladder/PitchLadderLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import { SVGContext } from '@/components/SVGWithContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
-import Note from '@/utils/Note'
 import { distance, projectPointOnLine } from '@/utils/math'
+import Note from '@/utils/Note'
 
 const MOUSE_SNAP = 5
 

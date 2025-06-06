@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from 'react'
 
-import { PitchCircleContext } from '@/components/PitchCircle'
-import { PitchLine } from '@/components/PitchLine'
+import { PitchCircleContext } from '@/components/circle/PitchCircle'
+import { PitchLine } from '@/components/circle/PitchLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import { useKey } from '@/hooks/useKey'

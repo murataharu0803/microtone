@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 
-import { PitchLadderContext } from '@/components/PitchLadder'
+import { PitchLadderContext } from '@/components/ladder/PitchLadder'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'

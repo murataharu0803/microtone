@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 
-import { PitchCircleContext } from '@/components/PitchCircle'
+import { PitchCircleContext } from '@/components/circle/PitchCircle'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'

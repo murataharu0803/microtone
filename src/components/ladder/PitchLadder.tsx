@@ -1,8 +1,8 @@
 import React, { createContext, useState } from 'react'
 
-import LadderNoteIndicator from '@/components/LadderNoteIndicator'
-import PitchLadderMouse from '@/components/PitchLadderMouse'
-import PitchLadderSet from '@/components/PitchLadderSet'
+import LadderNoteIndicator from '@/components/ladder/LadderNoteIndicator'
+import PitchLadderMouse from '@/components/ladder/PitchLadderMouse'
+import PitchLadderSet from '@/components/ladder/PitchLadderSet'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import { useKey } from '@/hooks/useKey'

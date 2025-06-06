@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 
-import PitchButton from '@/components/PitchButton'
-import { PitchLine } from '@/components/PitchLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchButton from '@/components/circle/PitchButton'
+import { PitchLine } from '@/components/circle/PitchLine'
+
 import Note, { NoteClass } from '@/utils/Note'
 import { findFurthest } from '@/utils/math'
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 
-import PitchLadderLineLine from '@/components/PitchLadderLineLine'
+import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
 import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
 import Note from '@/utils/Note'
