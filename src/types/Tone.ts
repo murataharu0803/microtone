@@ -8,7 +8,7 @@ export default class Tone {
   private ctx: AudioContext
   private osc: OscillatorNode
   private gain: GainNode
-  private isActive: boolean = false
+  public isActive: boolean = false
 
   constructor(ctx: AudioContext) {
     this.ctx = ctx
@@ -28,7 +28,7 @@ export default class Tone {
     this.frequency = frequency
 
     this.gain.gain.setValueAtTime(0, this.ctx.currentTime)
-    this.gain.gain.linearRampToValueAtTime(0.2, this.ctx.currentTime + ATTACK)
+    this.gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + ATTACK)
 
     this.isActive = true
   }
@@ -41,17 +41,14 @@ export default class Tone {
   }
 
   public stop(
-    callback: () => void = () => void 0,
     fromPedal: boolean = false,
     isPedaled: boolean = false,
+    callback: () => void = () => void 0,
   ) {
-    if (fromPedal && this.isActive) return
-    if (isPedaled) this.isActive = false
-    if (!fromPedal && isPedaled) return
+    if (fromPedal && this.isActive) return false
+    if (!fromPedal) this.isActive = false
+    if (!fromPedal && isPedaled) return false
 
-    // !fromPedal && !isPedaled
-    // fromPedal && !this.isActive
-    this.isActive = false
     this.frequency = null
     this.gain.gain.cancelScheduledValues(this.ctx.currentTime)
     this.gain.gain.setValueAtTime(this.gain.gain.value, this.ctx.currentTime)
@@ -60,6 +57,7 @@ export default class Tone {
       this.cleanup()
       callback()
     }, RELEASE * 1000 + 10)
+    return true
   }
 
   private cleanup() {

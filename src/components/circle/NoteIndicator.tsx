@@ -10,12 +10,12 @@ const NoteIndicator: React.FC = () => {
   const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)
 
   const [frequencies, setFrequencies] = React.useState<number[]>(
-    audioManager.current?.frequencyList || [],
+    audioManager?.frequencyList || [],
   )
 
   useEffect(() => {
-    const removeSubscription = audioManager.current?.subscribe(
-      () => setFrequencies(audioManager.current?.frequencyList || []),
+    const removeSubscription = audioManager?.subscribe(
+      () => setFrequencies(audioManager?.frequencyList || []),
     )
     return () => { removeSubscription?.() }
   }, [audioManager])

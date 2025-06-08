@@ -40,6 +40,15 @@ export const distance = (
   { x: x2, y: y2 }: Position,
 ): number => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
 
+export const getPointByRadiusAndAngle = (
+  center: Position,
+  radius: number,
+  angle: number,
+): Position => ({
+  x: center.x + radius * Math.cos(angle),
+  y: center.y + radius * Math.sin(angle),
+})
+
 export const projectPointOnLine = (
   point: Position,
   line: [Position, Position],
@@ -73,16 +82,26 @@ export const mapRange = (
   return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin)
 }
 
+export const getDistanceToLine = (
+  point: Position,
+  line: [Position, Position],
+): number => {
+  const perpendicularPoint = projectPointOnLine(point, line)
+  return distance(point, perpendicularPoint)
+}
+
 export const getRatioOnLineSegment = (
   point: Position,
   line: [Position, Position],
 ): number => {
   const [start, end] = line
   const perpendicularPoint = projectPointOnLine(point, line)
-  const lineLength = distance(start, end)
-  const startToPoint = distance(start, perpendicularPoint)
-  const endToPoint = distance(end, perpendicularPoint)
-  return startToPoint / (startToPoint + endToPoint) * lineLength
+  const vector = { x: end.x - start.x, y: end.y - start.y }
+  const pointVector = { x: perpendicularPoint.x - start.x, y: perpendicularPoint.y - start.y }
+  const ratio = Math.abs(vector.x) > Math.abs(vector.y)
+    ? pointVector.x / vector.x
+    : pointVector.y / vector.y
+  return ratio
 }
 
 export const getPositionOnLineSegment = (
@@ -98,15 +117,25 @@ export const getPositionOnLineSegment = (
 
 export const getVerticalEndpoints = (
   center: Position,
-  radius: number,
+  width: number,
   angle: number,
 ): [Position, Position] => [
   {
-    x: center.x + radius * Math.cos(angle + R_90),
-    y: center.y + radius * Math.sin(angle + R_90),
+    x: center.x + width / 2 * Math.cos(angle + R_90),
+    y: center.y + width / 2 * Math.sin(angle + R_90),
   },
   {
-    x: center.x + radius * Math.cos(angle - R_90),
-    y: center.y + radius * Math.sin(angle - R_90),
+    x: center.x + width / 2 * Math.cos(angle - R_90),
+    y: center.y + width / 2 * Math.sin(angle - R_90),
   },
 ]
+
+export const moveInLimit = (
+  value: number,
+  delta: number,
+  limit: [number, number],
+): number => {
+  const [min, max] = limit
+  const newValue = value + delta
+  return Math.max(min, Math.min(max, newValue))
+}

@@ -1,14 +1,14 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef } from 'react'
 
 import PitchLine from '@/components/circle/PitchLine'
 
 import PitchCircleContext from '@/context/PitchCircleContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { useKey } from '@/hooks/useKey'
-import { useMouse } from '@/hooks/useMouse'
+import { useNote } from '@/hooks/useNote'
 
 import Note from '@/types/Note'
+import { getPointByRadiusAndAngle } from '@/utils/math'
 
 
 interface PlayableWrapperProps {
@@ -18,38 +18,13 @@ interface PlayableWrapperProps {
 }
 
 const PlayableWrapper: React.FC<PlayableWrapperProps> = ({ note, triggerKey, children }) => {
-  const { playNote, stopNote } = useContext(PitchVisualizeSystemContext)
-
   const buttonRef = useRef<SVGCircleElement>(null)
-  const mouseNoteState = useState<string | null>(null)
-  const keyNoteState = useState<string | null>(null)
 
-  const play = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) setValue(playNote(note.frequency, value))
-    else setValue(playNote(note.frequency))
-  }
-
-  const stop = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) {
-      stopNote(value)
-      setValue(null)
-    }
-  }
-
-  const mouseStartPlaying = () => play(mouseNoteState)
-  const mouseStopPlaying = () => stop(mouseNoteState)
-  const keyStartPlaying = () => play(keyNoteState)
-  const keyStopPlaying = () => stop(keyNoteState)
-
-  useMouse(buttonRef, mouseStartPlaying, mouseStopPlaying)
-  useKey(triggerKey || '', keyStartPlaying, keyStopPlaying)
+  const { active } = useNote(note.frequency, buttonRef, triggerKey)
 
   return <g ref={buttonRef}>
-    {(mouseNoteState[0] || keyNoteState[0]) &&
-      <PitchLine note={note} color="white" />
-    }{children}
+    {active && <PitchLine note={note} color="white" />}
+    {children}
   </g>
 }
 
@@ -75,15 +50,14 @@ const PitchButton: React.FC<PitchLineProps> = ({
   const { startPitch } = useContext(PitchVisualizeSystemContext)
 
   const length = note.length(startRadius, radiusStep, startPitch)
-  const x = center.x + length * Math.cos(note.angle)
-  const y = center.y + length * Math.sin(note.angle)
+  const point = getPointByRadiusAndAngle(center, length, note.angle)
 
   const circle = <>
     <PitchLine note={note} color="white" />
     <circle
       className="pitch-button"
-      cx={x}
-      cy={y}
+      cx={point.x}
+      cy={point.y}
       r={5}
       fill={color}
       style={{ cursor: 'pointer' }}

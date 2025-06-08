@@ -1,17 +1,18 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useRef } from 'react'
 
 import { PitchGridContext } from '@/components/grid/PitchGrid'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { useKey } from '@/hooks/useKey'
-import { useMouse } from '@/hooks/useMouse'
-
 import { OVERTONES_COLORS, PRIMES } from '@/utils/overtones'
 import { getHalfSectorPath, getRingPath } from '@/utils/sector'
 
+import { useNote } from '@/hooks/useNote'
+
+import Arrow from '@/components/Arrow'
 import Position from '@/types/Position'
-import { LEFT, R_180, RIGHT } from '@/types/constants'
+import { DOWN, LEFT, R_180, RIGHT, UP } from '@/types/constants'
+import { getPointByRadiusAndAngle } from '@/utils/math'
 
 const ZERO_COLOR = '#444444'
 const GAP = 4
@@ -89,8 +90,6 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({ position, d1, d2, d3, d, dn
     baseFrequency,
     startPitch,
     endPitch,
-    playNote,
-    stopNote,
   } = useContext(PitchVisualizeSystemContext)
   const { axis } = useContext(PitchGridContext)
 
@@ -111,43 +110,29 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({ position, d1, d2, d3, d, dn
   const inRange = pitch >= startPitch && pitch <= endPitch
 
   const buttonRef = useRef<SVGCircleElement>(null)
-  const mouseNoteState = useState<string | null>(null)
-  const keyNoteState = useState<string | null>(null)
+  const { active } = useNote(frequency, buttonRef, triggerKey)
 
-  const play = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) setValue(playNote(frequency, value))
-    else setValue(playNote(frequency))
-  }
-
-  const stop = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) {
-      stopNote(value)
-      setValue(null)
-    }
-  }
-
-  const mouseStartPlaying = () => play(mouseNoteState)
-  const mouseStopPlaying = () => stop(mouseNoteState)
-  const keyStartPlaying = () => play(keyNoteState)
-  const keyStopPlaying = () => stop(keyNoteState)
-
-  useMouse(buttonRef, mouseStartPlaying, mouseStopPlaying)
-  useKey(triggerKey || '', keyStartPlaying, keyStopPlaying)
+  const { x, y } = getPointByRadiusAndAngle(position, 34, d1 > 0 ? UP : DOWN)
 
   return <g ref={buttonRef} style={{ opacity: inRange ? 1 : 0.25 }}>
     <circle
       cx={position.x}
       cy={position.y}
-      r={30}
-      fill={(mouseNoteState[0] || keyNoteState[0]) ? '#888888' : 'transparent'}
+      r={24}
+      fill={active ? '#444444' : 'transparent'}
     />
     {dividedRing(`d2-${d2}-d3-${d3}`, position, 'out', d2, OVERTONES_COLORS[1] || '#888888')}
     {dividedRing(`d2-${d2}-d3-${d3}`, position, 'mid', d3, OVERTONES_COLORS[2] || '#888888')}
     {d && dn &&
       dividedRing(`d2-${d2}-d3-${d3}`, position, 'in', dn, OVERTONES_COLORS[d - 1] || '#888888')
     }
+    {Array.from({ length: Math.abs(d1) }, (_, i) => <Arrow
+      key={i}
+      c={{ x, y: y + 5 * i * (d1 > 0 ? -1 : 1) }}
+      angle={d1 > 0 ? UP : DOWN}
+      length={10}
+      color={OVERTONES_COLORS[0] || '#888888'}
+    />)}
   </g>
 }
 

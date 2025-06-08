@@ -1,18 +1,17 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 
 import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
 
 import PitchLadderContext from '@/context/PitchLadderContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { useMouse } from '@/hooks/useMouse'
-
 import { getAngle, getPositionOnLineSegment, getVerticalEndpoints, mapRange } from '@/utils/math'
 
+import { useNote } from '@/hooks/useNote'
 import Note from '@/types/Note'
 import { R_90 } from '@/types/constants'
 
-const MOUSE_SNAP = 5
+const MOUSE_SNAP = 10
 
 interface PlayableWrapperProps {
   note: Note
@@ -21,32 +20,12 @@ interface PlayableWrapperProps {
 }
 
 const PlayableWrapper: React.FC<PlayableWrapperProps> = ({ note, shrink, children }) => {
-  const { playNote, stopNote } = useContext(PitchVisualizeSystemContext)
-
   const buttonRef = useRef<SVGCircleElement>(null)
-  const mouseNoteState = useState<string | null>(null)
 
-  const play = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) setValue(playNote(note.frequency, value))
-    else setValue(playNote(note.frequency))
-  }
-
-  const stop = (state: typeof mouseNoteState) => {
-    const [value, setValue] = state
-    if (value) {
-      stopNote(value)
-      setValue(null)
-    }
-  }
-
-  const mouseStartPlaying = () => play(mouseNoteState)
-  const mouseStopPlaying = () => stop(mouseNoteState)
-
-  useMouse(buttonRef, mouseStartPlaying, mouseStopPlaying)
+  const { active } = useNote(note.frequency, buttonRef)
 
   return <g ref={buttonRef}>
-    {mouseNoteState[0] &&
+    {active &&
       <PitchLadderLineLine note={note} shrink={shrink} color="white" />
     }{children}
   </g>

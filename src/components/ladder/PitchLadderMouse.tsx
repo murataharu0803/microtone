@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef } from 'react'
 
 import PitchLadderLine from '@/components/ladder/PitchLadderLine'
 
@@ -8,11 +8,11 @@ import SVGContext from '@/context/SVGContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
-import { distance, projectPointOnLine } from '@/utils/math'
+import { getDistanceToLine, getRatioOnLineSegment, mapRange } from '@/utils/math'
 
 import Note from '@/types/Note'
 
-const MOUSE_SNAP = 5
+const MOUSE_SNAP = 10
 
 const PitchLadderMouse: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
@@ -23,61 +23,50 @@ const PitchLadderMouse: React.FC = () => {
   } = useContext(PitchLadderContext)
   const {
     baseFrequency,
+    audioManager,
     startPitch,
     endPitch,
-    playNote,
-    stopNote,
   } = useContext(PitchVisualizeSystemContext)
 
   const noteToken = useRef<string | null>(null)
 
+  const play = useCallback((frequency: number) => {
+    if (noteToken.current)
+      noteToken.current = audioManager?.play(frequency, noteToken.current) || null
+    else
+      noteToken.current = audioManager?.play(frequency) || null
+  }, [audioManager])
+
+  const stop = useCallback(() => {
+    if (noteToken.current)
+      noteToken.current = audioManager?.stop(noteToken.current) || null
+  }, [audioManager])
+
   const getTone = () => {
     if (!mousePosition) return null
 
-    const projectPoint = projectPointOnLine(
-      mousePosition,
-      [startPoint, endPoint],
-    )
-
-    const dist = distance(mousePosition, projectPoint)
+    const dist = getDistanceToLine(mousePosition, [startPoint, endPoint])
     if (dist > width / 2 + MOUSE_SNAP) return null
 
-    const fullDistance = distance(endPoint, startPoint)
-    if (distance(projectPoint, startPoint) > fullDistance) return null
-    if (distance(projectPoint, endPoint) > fullDistance) return null
+    const ratio = getRatioOnLineSegment(mousePosition, [startPoint, endPoint])
+    if (ratio < 0 || ratio > 1) return null
 
-    const ratio = distance(projectPoint, startPoint) / fullDistance
-    const pitch = startPitch + ratio * (endPitch - startPitch)
+    const pitch = mapRange([0, 1], [startPitch, endPitch], ratio)
     return baseFrequency * Math.pow(2, pitch)
   }
 
   const playMouseTone = (pressed = true) => {
     if (!pressed) return
     const frequency = getTone()
-    if (frequency) {
-      if (noteToken.current) noteToken.current = playNote(frequency, noteToken.current)
-      else noteToken.current = playNote(frequency)
-    } else if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
+    if (frequency) play(frequency)
+    else stop()
   }
 
-  const stopMouseTone = () => {
-    if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
-  }
-
-  useMouse(SVGRef, playMouseTone, stopMouseTone, playMouseTone)
+  useMouse(SVGRef, playMouseTone, stop, playMouseTone)
 
   useEffect(() => () => {
-    if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
-  }, [stopNote])
+    stop()
+  }, [stop])
 
   const frequency = getTone()
   if (!frequency) return null

@@ -13,7 +13,6 @@ import { useKey } from '@/hooks/useKey'
 
 import { spiral } from '@/utils/spiral'
 
-import AudioManager from '@/types/AudioManager'
 import Position from '@/types/Position'
 import { R_360, R_90 } from '@/types/constants'
 
@@ -28,23 +27,21 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
   startRadius,
   radiusStep,
 }) => {
-  const { startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
+  const { audioManager, startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
 
   const [isSnapped, setIsSnapped] = useState(true)
   const [snapToJI, setSnapToJI] = useState(false)
 
-  const audioManager = React.useRef<AudioManager>(new AudioManager())
-
   useKey(
     'Shift',
-    () => { setIsSnapped(false); audioManager.current.stopAll() },
-    () => { setIsSnapped(true); audioManager.current.stopAll() },
+    () => { setIsSnapped(false); audioManager?.stopAll() },
+    () => { setIsSnapped(true); audioManager?.stopAll() },
   )
 
   useKey(
     'Control',
-    () => { setSnapToJI(true); audioManager.current.stopAll() },
-    () => { setSnapToJI(false); audioManager.current.stopAll() },
+    () => { setSnapToJI(true); audioManager?.stopAll() },
+    () => { setSnapToJI(false); audioManager?.stopAll() },
   )
 
   const startTheta = startPitch * R_360 - R_90

@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import { createContext } from 'react'
 
 import AudioManager from '@/types/AudioManager'
 import JIConstraint, { defaultJIConstraint } from '@/types/JIConstraint'
@@ -8,10 +8,9 @@ interface PitchVisualizeSystemContextProps {
   startPitch: number
   endPitch: number
   JIConstraint: JIConstraint
-  audioManager: React.RefObject<AudioManager | null>
-  pedalRef: React.RefObject<boolean | null>
-  playNote: (frequency: number, token?: string) => string | null
-  stopNote: (token: string) => string | null
+  audioManager: AudioManager | null
+  // playNote: (frequency: number, token?: string) => string | null
+  // stopNote: (token: string) => string | null
 }
 
 
@@ -20,10 +19,9 @@ const PitchVisualizeSystemContext = createContext<PitchVisualizeSystemContextPro
   startPitch: -2,
   endPitch: 3,
   JIConstraint: defaultJIConstraint,
-  audioManager: React.createRef<AudioManager>(),
-  pedalRef: React.createRef<boolean>(),
-  playNote: () => null,
-  stopNote: () => null,
+  audioManager: null,
+  // playNote: () => null,
+  // stopNote: () => null,
 })
 
 export default PitchVisualizeSystemContext

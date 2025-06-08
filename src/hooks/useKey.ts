@@ -31,7 +31,6 @@ export const useKey = (
   }, [key, onUp])
 
   useEffect(() => {
-    // Initial state check
     document.addEventListener('keydown', setKeyDown)
     document.addEventListener('keyup', setKeyUp)
     window.addEventListener('blur', forceKeyUp)

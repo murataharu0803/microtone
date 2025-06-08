@@ -6,6 +6,8 @@ import PitchLadder from '@/components/ladder/PitchLadder'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
+import { useKey } from '@/hooks/useKey'
+
 import AudioManager from '@/types/AudioManager'
 import JIConstraint, { defaultJIConstraint } from '@/types/JIConstraint'
 
@@ -23,7 +25,12 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
   JIConstraint = defaultJIConstraint,
 }) => {
   const audioManager = React.useRef<AudioManager>(new AudioManager())
-  const pedalRef = React.useRef<boolean>(false)
+
+  useKey(
+    '/',
+    () => { audioManager.current.togglePedalOn() },
+    () => { audioManager.current.togglePedalOff() },
+  )
 
   return <PitchVisualizeSystemContext.Provider
     value={{
@@ -31,10 +38,9 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       startPitch,
       endPitch,
       JIConstraint,
-      audioManager,
-      pedalRef,
-      playNote: audioManager.current.play.bind(audioManager.current),
-      stopNote: audioManager.current.stop.bind(audioManager.current),
+      audioManager: audioManager.current,
+      // playNote: audioManager.play.bind(audioManager),
+      // stopNote: audioManager.stop.bind(audioManager),
     }}
   >
     <PitchCircle
@@ -45,19 +51,19 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
     <PitchLadder
       startPoint={{ x: 1170, y: 900 }}
       endPoint={{ x: 1170, y: 100 }}
-      width={100}
+      width={150}
     />
     <PitchGrid
       center={{ x: 1600, y: 500 }}
       spacing={{ x: 100, y: -100 }}
       triggerKeys={[
-        ['', 'x', 's', 'w', '2'],
-        ['', 'c', 'd', 'e', '3'],
-        ['', 'v', 'f', 'r', '4'],
-        ['', 'b', 'g', 't', '5'],
-        ['', 'n', 'h', 'y', '6'],
-        ['', 'm', 'j', 'u', '7'],
-        ['', ',', 'k', 'i', '8'],
+        ['', 'x', 's', 'w'],
+        ['', 'c', 'd', 'e'],
+        ['', 'v', 'f', 'r'],
+        ['', 'b', 'g', 't'],
+        ['', 'n', 'h', 'y'],
+        ['', 'm', 'j', 'u'],
+        ['', ',', 'k', 'i'],
       ]}
     />
   </PitchVisualizeSystemContext.Provider>

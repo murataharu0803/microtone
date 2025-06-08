@@ -3,7 +3,7 @@ import Tone from '@/types/Tone'
 export default class AudioManager {
   private ctx: AudioContext
   private tones: Map<string, Tone>
-  private listeners = new Set<() => void>()
+  private listeners = new Set<(type: 'pedal' | 'all' | 'single') => void>()
 
   public isPedaled: boolean = false
 
@@ -18,6 +18,12 @@ export default class AudioManager {
   constructor() {
     this.ctx = new AudioContext()
     this.tones = new Map<string, Tone>()
+  }
+
+  public exists(token: string | null): string | null {
+    if (!token) return null
+    const tone = this.tones.get(token)
+    return tone?.isActive ? token : null
   }
 
   public play(frequency: number, token?: string) {
@@ -45,23 +51,33 @@ export default class AudioManager {
   public stop(token: string) {
     const tone = this.tones.get(token)
     if (!tone) return null
-    tone.stop(() => this.tones.delete(token))
+    const success = tone.stop(false, this.isPedaled, () => this.tones.delete(token))
     this.emitChange()
-    return token
+    return success ? null : token
   }
 
   public stopAll() {
-    this.tones.forEach(tone => { tone.stop() })
+    this.tones.forEach(tone => { tone.stop(false, false) })
     this.tones.clear()
-    this.emitChange()
+    this.emitChange('all')
   }
 
-  public subscribe(callback: () => void) {
+  public togglePedalOn() {
+    this.isPedaled = true
+  }
+
+  public togglePedalOff() {
+    this.isPedaled = false
+    this.tones.forEach(tone => tone.stop(true, false))
+    this.emitChange('pedal')
+  }
+
+  public subscribe(callback: (type: 'pedal' | 'all' | 'single') => void) {
     this.listeners.add(callback)
     return () => this.listeners.delete(callback)
   }
 
-  private emitChange() {
-    this.listeners.forEach(fn => fn())
+  private emitChange(type: 'pedal' | 'all' | 'single' = 'single') {
+    this.listeners.forEach(fn => fn(type))
   }
 }

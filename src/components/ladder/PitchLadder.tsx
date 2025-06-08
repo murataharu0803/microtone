@@ -40,14 +40,14 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
 
   useKey(
     'Shift',
-    () => { setIsSnapped(false); audioManager.current?.stopAll() },
-    () => { setIsSnapped(true); audioManager.current?.stopAll() },
+    () => { setIsSnapped(false); audioManager?.stopAll() },
+    () => { setIsSnapped(true); audioManager?.stopAll() },
   )
 
   useKey(
     'Control',
-    () => { setSnapToJI(true); audioManager.current?.stopAll() },
-    () => { setSnapToJI(false); audioManager.current?.stopAll() },
+    () => { setSnapToJI(true); audioManager?.stopAll() },
+    () => { setSnapToJI(false); audioManager?.stopAll() },
   )
 
   const octaves = Array.from(

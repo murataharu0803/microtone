@@ -24,11 +24,10 @@ const PitchCircleMouse: React.FC = () => {
     radiusStep,
   } = useContext(PitchCircleContext)
   const {
+    audioManager,
     baseFrequency,
     startPitch,
     endPitch,
-    playNote,
-    stopNote,
   } = useContext(PitchVisualizeSystemContext)
 
   const noteToken = useRef<string | null>(null)
@@ -74,29 +73,21 @@ const PitchCircleMouse: React.FC = () => {
     if (!pressed) return
     const frequency = getTone()?.frequency
     if (frequency) {
-      if (noteToken.current) noteToken.current = playNote(frequency, noteToken.current)
-      else noteToken.current = playNote(frequency)
-    } else if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
+      if (noteToken.current)
+        noteToken.current = audioManager?.play(frequency, noteToken.current) || null
+      else noteToken.current = audioManager?.play(frequency) || null
+    } else if (noteToken.current) noteToken.current = audioManager?.stop(noteToken.current) || null
   }
 
   const stopMouseTone = () => {
-    if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
+    if (noteToken.current) noteToken.current = audioManager?.stop(noteToken.current) || null
   }
 
   useMouse(SVGRef, playMouseTone, stopMouseTone, playMouseTone)
 
   useEffect(() => () => {
-    if (noteToken.current) {
-      stopNote(noteToken.current)
-      noteToken.current = null
-    }
-  }, [stopNote])
+    if (noteToken.current) noteToken.current = audioManager?.stop(noteToken.current) || null
+  }, [audioManager])
 
   const tone = getTone()
   if (!tone) return null
