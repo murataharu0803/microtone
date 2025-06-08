@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 
 import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 
-import Note from '@/utils/Note'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+
+import Note from '@/types/Note'
 
 const LadderNoteIndicator: React.FC = () => {
   const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)

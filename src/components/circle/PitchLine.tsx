@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 
-import { PitchCircleContext } from '@/components/circle/PitchCircle'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchCircleContext from '@/context/PitchCircleContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import Note from '@/utils/Note'
+import Note from '@/types/Note'
 
 interface PitchLineProps {
   note: Note
@@ -11,7 +11,7 @@ interface PitchLineProps {
   width?: number
 }
 
-export const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 }) => {
+const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 }) => {
   const { center, startRadius, radiusStep } = useContext(PitchCircleContext)
   const { startPitch } = useContext(PitchVisualizeSystemContext)
   const length = note.length(startRadius, radiusStep, startPitch)
@@ -28,3 +28,5 @@ export const PitchLine: React.FC<PitchLineProps> = ({ note, color, width = .5 })
     strokeWidth={width}
   />
 }
+
+export default PitchLine

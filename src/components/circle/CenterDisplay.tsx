@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from 'react'
 
-import { PitchCircleContext } from '@/components/circle/PitchCircle'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchCircleContext from '@/context/PitchCircleContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import Note from '@/utils/Note'
 import { ETNotation, JINotation } from '@/utils/pitchNotation'
+
+import Note from '@/types/Note'
 
 const DISPLAY_RADIUS = 80
 const FONT_SIZE = 16

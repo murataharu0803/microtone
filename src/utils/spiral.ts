@@ -1,9 +1,7 @@
 // https://stackoverflow.com/questions/49091970/how-to-make-a-spiral-in-svg/49099258#49099258
 
-type Point = {
-  x: number
-  y: number
-}
+import { R_360 } from '@/types/constants'
+import Position from '@/types/Position'
 
 const lineIntersection = (m1: number, b1: number, m2: number, b2: number) => {
   if (m1 === m2) throw new Error('parallel slopes')
@@ -11,10 +9,10 @@ const lineIntersection = (m1: number, b1: number, m2: number, b2: number) => {
   return { x, y: m1 * x + b1 }
 }
 
-const pStr = (point: Point) => `${point.x},${point.y} `
+const pStr = (point: Position) => `${point.x},${point.y} `
 
-export default (
-  center: Point,
+export const spiral = (
+  center: Position,
   startRadius: number,
   spacePerLoop: number,
   startTheta: number,
@@ -23,7 +21,7 @@ export default (
 ) => {
   // Rename spiral parameters for the formula r = a + bθ
   const a = startRadius  // start distance from center
-  const b = spacePerLoop / Math.PI / 2 // space between each loop
+  const b = spacePerLoop / R_360 // space between each loop
 
   // convert angles to radians
   let newTheta = startTheta

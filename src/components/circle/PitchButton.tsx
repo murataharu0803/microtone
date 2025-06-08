@@ -1,13 +1,14 @@
 import React, { useContext, useRef, useState } from 'react'
 
-import { PitchCircleContext } from '@/components/circle/PitchCircle'
-import { PitchLine } from '@/components/circle/PitchLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchLine from '@/components/circle/PitchLine'
+
+import PitchCircleContext from '@/context/PitchCircleContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 import { useMouse } from '@/hooks/useMouse'
 
-import Note from '@/utils/Note'
+import Note from '@/types/Note'
 
 
 interface PlayableWrapperProps {

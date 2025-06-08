@@ -1,11 +1,8 @@
-import React, { createContext, useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
+
+import SVGContext from '@/context/SVGContext'
 
 import { MousePosition } from '@/hooks/useMouse'
-
-const SVGContext = createContext<{
-  mousePosition: MousePosition
-  SVGRef: React.RefObject<SVGSVGElement | null> | null
-}>({ mousePosition: null, SVGRef: null })
 
 const SVGWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [position, setPosition] = useState<MousePosition>(null)
@@ -28,7 +25,7 @@ const SVGWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <svg
     width="100%"
     height="100%"
-    viewBox="0 0 1920 1080"
+    viewBox="0 0 2000 1000"
     onMouseMove={onMouseEvent}
     onMouseLeave={onMouseEvent}
     ref={SVGRef}
@@ -41,4 +38,3 @@ const SVGWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) =
 }
 
 export default SVGWithContext
-export { SVGContext }

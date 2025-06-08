@@ -1,13 +1,16 @@
 import React, { useContext, useRef, useState } from 'react'
 
-import { PitchLadderContext } from '@/components/ladder/PitchLadder'
 import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+
+import PitchLadderContext from '@/context/PitchLadderContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
-import { distance } from '@/utils/math'
-import Note from '@/utils/Note'
+import { getAngle, getPositionOnLineSegment, getVerticalEndpoints, mapRange } from '@/utils/math'
+
+import Note from '@/types/Note'
+import { R_90 } from '@/types/constants'
 
 const MOUSE_SNAP = 5
 
@@ -66,37 +69,19 @@ const PitchLadderLine: React.FC<PitchLadderLineProps> = ({
   const { startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
   const { startPoint, endPoint, width } = React.useContext(PitchLadderContext)
 
-  const getLineEndPoints = (shift = 0) => {
-    const pitch = note.pitch
-    const range = endPitch - startPitch
-    const pitchPerPixel = range / distance(startPoint, endPoint)
-    const ratio =  (pitch - startPitch) / range + shift * pitchPerPixel
-    const pos = {
-      x: startPoint.x + ratio * (endPoint.x - startPoint.x),
-      y: startPoint.y + ratio * (endPoint.y - startPoint.y),
-    }
-
-    const angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x)
-    const theta1 = angle + Math.PI / 2
-    const theta2 = angle - Math.PI / 2
-
-    return {
-      x1: pos.x + width / 2 * Math.cos(theta1),
-      y1: pos.y + width / 2 * Math.sin(theta1),
-      x2: pos.x + width / 2 * Math.cos(theta2),
-      y2: pos.y + width / 2 * Math.sin(theta2),
-    }
-  }
-
-  const t = getLineEndPoints(MOUSE_SNAP)
-  const b = getLineEndPoints(-MOUSE_SNAP)
-  const hoverBoxPoints = `${t.x1},${t.y1} ${t.x2},${t.y2} ${b.x2},${b.y2} ${b.x1},${b.y1}`
+  const ratio = mapRange([startPitch, endPitch], [0, 1], note.pitch)
+  const point = getPositionOnLineSegment([startPoint, endPoint], ratio)
+  const angle = getAngle(startPoint, endPoint)
+  const endPoints = getVerticalEndpoints(point, width * (1 - shrink), angle)
+  const l = getVerticalEndpoints(endPoints[0], MOUSE_SNAP, angle + R_90)
+  const r = getVerticalEndpoints(endPoints[1], MOUSE_SNAP, angle + R_90)
+  const points = [l[0], l[1], r[1], r[0]].map(p => `${p.x},${p.y}`).join(' ')
 
   const box = <>
     <PitchLadderLineLine note={note} color={color} shrink={shrink} />
     {isPlayable && <polygon
       className="pitch-ladder-box"
-      points={hoverBoxPoints}
+      points={points}
       fill="transparent"
     />}
   </>

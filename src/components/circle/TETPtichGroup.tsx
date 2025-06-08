@@ -1,11 +1,14 @@
 import React, { useContext } from 'react'
 
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import PitchButton from '@/components/circle/PitchButton'
-import { PitchLine } from '@/components/circle/PitchLine'
+import PitchLine from '@/components/circle/PitchLine'
 
-import Note, { NoteClass } from '@/utils/Note'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+
 import { findFurthest } from '@/utils/math'
+
+import Note from '@/types/Note'
+import NoteClass from '@/types/NoteClass'
 
 interface TETPitchGroupProps {
   isPlayable?: boolean

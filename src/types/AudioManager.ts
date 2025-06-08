@@ -1,9 +1,19 @@
-import Tone from '@/utils/Tone'
+import Tone from '@/types/Tone'
 
 export default class AudioManager {
   private ctx: AudioContext
   private tones: Map<string, Tone>
   private listeners = new Set<() => void>()
+
+  public isPedaled: boolean = false
+
+  public get toneList(): string[] {
+    return Array.from(this.tones.keys())
+  }
+
+  public get frequencyList(): number[] {
+    return Array.from(this.tones.values()).map(tone => tone.frequency || 0).filter(Boolean)
+  }
 
   constructor() {
     this.ctx = new AudioContext()
@@ -44,14 +54,6 @@ export default class AudioManager {
     this.tones.forEach(tone => { tone.stop() })
     this.tones.clear()
     this.emitChange()
-  }
-
-  public get toneList(): string[] {
-    return Array.from(this.tones.keys())
-  }
-
-  public get frequencyList(): number[] {
-    return Array.from(this.tones.values()).map(tone => tone.frequency || 0).filter(Boolean)
   }
 
   public subscribe(callback: () => void) {

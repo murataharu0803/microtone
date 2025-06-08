@@ -1,13 +1,15 @@
 import React, { useContext } from 'react'
 
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
 import PitchButton from '@/components/circle/PitchButton'
-import { PitchLine } from '@/components/circle/PitchLine'
+import PitchLine from '@/components/circle/PitchLine'
 
-import Note from '@/utils/Note'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+
 import { findFurthest } from '@/utils/math'
+import { getOvertones } from '@/utils/overtones'
 import { ERROR_MARGIN } from '@/utils/pitchNotation'
-import { getOvertones } from '@/utils/prime'
+
+import Note from '@/types/Note'
 
 interface JIPitchGroupProps {
   isPlayable?: boolean

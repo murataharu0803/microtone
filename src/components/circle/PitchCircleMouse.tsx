@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
 import PitchButton from '@/components/circle/PitchButton'
-import { PitchCircleContext } from '@/components/circle/PitchCircle'
-import { PitchLine } from '@/components/circle/PitchLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
-import { SVGContext } from '@/components/SVGWithContext'
+import PitchLine from '@/components/circle/PitchLine'
+
+import PitchCircleContext from '@/context/PitchCircleContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+import SVGContext from '@/context/SVGContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
 import { distance } from '@/utils/math'
-import Note from '@/utils/Note'
+
+import Note from '@/types/Note'
+import { R_360, R_90 } from '@/types/constants'
 
 const MOUSE_SNAP = 40
 
@@ -42,8 +45,8 @@ const PitchCircleMouse: React.FC = () => {
 
     const distanceToCenter = distance(mousePosition, center)
     const mouseAngle =
-      Math.atan2(mousePosition.y - center.y, mousePosition.x - center.x) + 5 * Math.PI / 2
-    const mouseNormalizedPitch = mouseAngle / (2 * Math.PI) % 1
+      Math.atan2(mousePosition.y - center.y, mousePosition.x - center.x)
+    const mouseNormalizedPitch = ((mouseAngle + R_90) / R_360 + 1) % 1
     const deltaPitch = (mouseNormalizedPitch - startPitch) % 1
     const firstDeltaPitch = deltaPitch < 0 ? deltaPitch + 1 : deltaPitch
 

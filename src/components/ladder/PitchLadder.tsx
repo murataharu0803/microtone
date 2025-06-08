@@ -1,26 +1,25 @@
-import React, { createContext, useState } from 'react'
+import React, { useState } from 'react'
 
 import LadderNoteIndicator from '@/components/ladder/LadderNoteIndicator'
 import PitchLadderMouse from '@/components/ladder/PitchLadderMouse'
 import PitchLadderSet from '@/components/ladder/PitchLadderSet'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+
+import PitchLadderContext from '@/context/PitchLadderContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 
-import Note, { NoteClass } from '@/utils/Note'
-import { getOvertones } from '@/utils/prime'
+import { getOvertones } from '@/utils/overtones'
+
+import Note from '@/types/Note'
+import NoteClass from '@/types/NoteClass'
+import Position from '@/types/Position'
 
 interface PitchLadderProps {
-  startPoint: { x: number, y: number }
-  endPoint: { x: number, y: number }
+  startPoint: Position
+  endPoint: Position
   width: number
 }
-
-const PitchLadderContext = createContext<PitchLadderProps>({
-  startPoint: { x: 1720, y: 100 },
-  endPoint: { x: 1720, y: 980 },
-  width: 150,
-})
 
 const PitchLadder: React.FC<PitchLadderProps> = ({
   startPoint,
@@ -96,4 +95,3 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
 }
 
 export default PitchLadder
-export { PitchLadderContext }

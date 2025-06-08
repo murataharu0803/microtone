@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
 
-import { PitchLadderContext } from '@/components/ladder/PitchLadder'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchLadderContext from '@/context/PitchLadderContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import Note from '@/utils/Note'
+import Note from '@/types/Note'
+import { getAngle, getPositionOnLineSegment, getVerticalEndpoints, mapRange } from '@/utils/math'
 
 const PitchLadderLineLine: React.FC<{
   note: Note
@@ -13,31 +14,22 @@ const PitchLadderLineLine: React.FC<{
   const { startPitch, endPitch } = useContext(PitchVisualizeSystemContext)
   const { startPoint, endPoint, width } = React.useContext(PitchLadderContext)
 
-  const getLineEndPoints = () => {
-    const pitch = note.pitch
-    const range = endPitch - startPitch
-    const ratio =  (pitch - startPitch) / range
-    const pos = {
-      x: startPoint.x + ratio * (endPoint.x - startPoint.x),
-      y: startPoint.y + ratio * (endPoint.y - startPoint.y),
-    }
+  const ratio = mapRange([startPitch, endPitch], [0, 1], note.pitch)
+  const point = getPositionOnLineSegment([startPoint, endPoint], ratio)
+  const angle = getAngle(startPoint, endPoint)
+  const endPoints = getVerticalEndpoints(point, width * (1 - shrink), angle)
 
-    const angle = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x)
-    const theta1 = angle + Math.PI / 2
-    const theta2 = angle - Math.PI / 2
-
-    return {
-      x1: pos.x + width * (1 - shrink) / 2 * Math.cos(theta1),
-      y1: pos.y + width * (1 - shrink) / 2 * Math.sin(theta1),
-      x2: pos.x + width * (1 - shrink) / 2 * Math.cos(theta2),
-      y2: pos.y + width * (1 - shrink) / 2 * Math.sin(theta2),
-    }
+  const endPointsValues = {
+    x1: endPoints[0].x,
+    y1: endPoints[0].y,
+    x2: endPoints[1].x,
+    y2: endPoints[1].y,
   }
 
   return <line
     className="pitch-ladder-line"
     key={note.pitch}
-    {...getLineEndPoints()}
+    {...endPointsValues}
     stroke={color}
     width={0.5}
   />

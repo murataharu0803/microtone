@@ -1,44 +1,20 @@
-import React, { createContext } from 'react'
+import React from 'react'
 
 import PitchCircle from '@/components/circle/PitchCircle'
+import PitchGrid from '@/components/grid/PitchGrid'
 import PitchLadder from '@/components/ladder/PitchLadder'
 
-import AudioManager from '@/utils/AudioManager'
-import { JIConstraint } from '@/utils/Note'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+
+import AudioManager from '@/types/AudioManager'
+import JIConstraint, { defaultJIConstraint } from '@/types/JIConstraint'
 
 interface PitchVisualizeSystemProps {
   baseFrequency: number
   startPitch: number
   endPitch: number
-  defaultOctaveShift?: number
   JIConstraint?: JIConstraint
 }
-
-const defaultJIConstraint: JIConstraint = {
-  maxPrime: 13,
-  maxFactor: 25,
-  maxDivision: 3,
-}
-
-/* eslint-disable @stylistic/indent */
-const PitchVisualizeSystemContext = createContext<{
-  baseFrequency: number
-  startPitch: number
-  endPitch: number
-  JIConstraint: JIConstraint
-  audioManager: React.RefObject<AudioManager | null>
-  playNote: (frequency: number, token?: string) => string | null
-  stopNote: (token: string) => string | null
-}>({
-  baseFrequency: 440 * Math.pow(2, -9 / 12), // Middle C
-  startPitch: -2,
-  endPitch: 3,
-  JIConstraint: defaultJIConstraint,
-  audioManager: React.createRef<AudioManager>(),
-  playNote: () => null,
-  stopNote: () => null,
-})
-/* eslint-enable @stylistic/indent */
 
 const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
   baseFrequency,
@@ -47,6 +23,7 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
   JIConstraint = defaultJIConstraint,
 }) => {
   const audioManager = React.useRef<AudioManager>(new AudioManager())
+  const pedalRef = React.useRef<boolean>(false)
 
   return <PitchVisualizeSystemContext.Provider
     value={{
@@ -55,22 +32,35 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       endPitch,
       JIConstraint,
       audioManager,
+      pedalRef,
       playNote: audioManager.current.play.bind(audioManager.current),
       stopNote: audioManager.current.stop.bind(audioManager.current),
     }}
   >
     <PitchCircle
-      center={{ x: 720, y: 540 }}
+      center={{ x: 600, y: 500 }}
       startRadius={250}
       radiusStep={50}
     />
     <PitchLadder
-      startPoint={{ x: 1400, y: 980 }}
-      endPoint={{ x: 1400, y: 100 }}
-      width={200}
+      startPoint={{ x: 1170, y: 900 }}
+      endPoint={{ x: 1170, y: 100 }}
+      width={100}
+    />
+    <PitchGrid
+      center={{ x: 1600, y: 500 }}
+      spacing={{ x: 100, y: -100 }}
+      triggerKeys={[
+        ['', 'x', 's', 'w', '2'],
+        ['', 'c', 'd', 'e', '3'],
+        ['', 'v', 'f', 'r', '4'],
+        ['', 'b', 'g', 't', '5'],
+        ['', 'n', 'h', 'y', '6'],
+        ['', 'm', 'j', 'u', '7'],
+        ['', ',', 'k', 'i', '8'],
+      ]}
     />
   </PitchVisualizeSystemContext.Provider>
 }
 
 export default PitchVisualizeSystem
-export { PitchVisualizeSystemContext }

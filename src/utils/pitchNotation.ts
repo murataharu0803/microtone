@@ -1,5 +1,7 @@
-import Note, { JIConstraint } from '@/utils/Note'
-import { PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/prime'
+import { PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/overtones'
+
+import JIConstraint from '@/types/JIConstraint'
+import Note from '@/types/Note'
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
 export const ERROR_MARGIN = 0.000001

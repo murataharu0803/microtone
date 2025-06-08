@@ -1,35 +1,27 @@
-import React, { createContext, useState } from 'react'
+import React, { useState } from 'react'
 
 import CenterDisplay from '@/components/circle/CenterDisplay'
 import JIPitchGroup from '@/components/circle/JIPitchGroup'
 import NoteIndicator from '@/components/circle/NoteIndicator'
 import PitchCircleMouse from '@/components/circle/PitchCircleMouse'
 import TETPitchGroup from '@/components/circle/TETPtichGroup'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+
+import PitchCircleContext from '@/context/PitchCircleContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 
-import AudioManager from '@/utils/AudioManager'
-import spiral from '@/utils/spiral'
+import { spiral } from '@/utils/spiral'
+
+import AudioManager from '@/types/AudioManager'
+import Position from '@/types/Position'
+import { R_360, R_90 } from '@/types/constants'
 
 interface PitchCircleProps {
-  center: { x: number, y: number }
+  center: Position
   startRadius: number
   radiusStep: number
-  defaultOctaveShift?: number
 }
-
-
-const PitchCircleContext = createContext<{
-  center: { x: number, y: number }
-  startRadius: number
-  radiusStep: number
-}>({
-  center: { x: 500, y: 500 },
-  startRadius: 150,
-  radiusStep: 400,
-})
-
 
 const PitchCircle: React.FC<PitchCircleProps> = ({
   center,
@@ -55,8 +47,8 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
     () => { setSnapToJI(false); audioManager.current.stopAll() },
   )
 
-  const startTheta = startPitch * 2 * Math.PI - Math.PI / 2
-  const endTheta = endPitch * 2 * Math.PI - Math.PI / 2
+  const startTheta = startPitch * R_360 - R_90
+  const endTheta = endPitch * R_360 - R_90
 
   return <PitchCircleContext.Provider
     value={{
@@ -70,13 +62,13 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       <NoteIndicator />
       <JIPitchGroup
         isPlayable={isSnapped && snapToJI}
-        triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
+        // triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
       />
       {!isSnapped && <PitchCircleMouse />}
       <TETPitchGroup
         isPlayable={isSnapped && !snapToJI}
         TET={12}
-        triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
+        // triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
       />
       <CenterDisplay />
     </g>
@@ -84,4 +76,3 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
 }
 
 export default PitchCircle
-export { PitchCircleContext }

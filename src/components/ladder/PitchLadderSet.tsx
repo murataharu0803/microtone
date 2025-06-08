@@ -2,7 +2,7 @@ import React from 'react'
 
 import PitchLadderLine from '@/components/ladder/PitchLadderLine'
 
-import Note from '@/utils/Note'
+import Note from '@/types/Note'
 
 interface PitchLadderSetProps {
   isPlayable?: boolean

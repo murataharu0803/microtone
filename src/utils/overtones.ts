@@ -1,4 +1,6 @@
-import { JIConstraint, NoteClass } from '@/utils/Note'
+import JIConstraint from '@/types/JIConstraint'
+
+import NoteClass from '@/types/NoteClass'
 
 export const MAX = 31
 
@@ -16,7 +18,6 @@ export const PRIMES_SYMBOLS_DOWN = [
   '', 'v', 't', 's', 'l', 'j',
   'h', 'n', 'x', 'y', 'z',
 ]
-
 
 export const OVERTONES_FACTORS = [
   2, 3, 5, 7,

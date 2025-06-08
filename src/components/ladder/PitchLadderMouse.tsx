@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useRef } from 'react'
 
-import { PitchLadderContext } from '@/components/ladder/PitchLadder'
 import PitchLadderLine from '@/components/ladder/PitchLadderLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
-import { SVGContext } from '@/components/SVGWithContext'
+
+import PitchLadderContext from '@/context/PitchLadderContext'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+import SVGContext from '@/context/SVGContext'
 
 import { useMouse } from '@/hooks/useMouse'
 
 import { distance, projectPointOnLine } from '@/utils/math'
-import Note from '@/utils/Note'
+
+import Note from '@/types/Note'
 
 const MOUSE_SNAP = 5
 
@@ -34,8 +36,7 @@ const PitchLadderMouse: React.FC = () => {
 
     const projectPoint = projectPointOnLine(
       mousePosition,
-      startPoint,
-      endPoint,
+      [startPoint, endPoint],
     )
 
     const dist = distance(mousePosition, projectPoint)

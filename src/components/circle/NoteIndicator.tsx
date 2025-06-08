@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 
-import { PitchLine } from '@/components/circle/PitchLine'
-import { PitchVisualizeSystemContext } from '@/components/PitchVisualizeSystem'
+import PitchLine from '@/components/circle/PitchLine'
 
-import Note from '@/utils/Note'
+import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+
+import Note from '@/types/Note'
 
 const NoteIndicator: React.FC = () => {
   const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)

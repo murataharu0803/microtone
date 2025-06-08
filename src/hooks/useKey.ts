@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-export const useKey = (key: string, onDown: () => void, onUp: () => void) => {
+export const useKey = (
+  key: string,
+  onDown: () => void = () => void 0,
+  onUp: () => void = () => void 0,
+) => {
   const isKeyDown = useRef(false)
 
   const setKeyDown = useCallback((e: KeyboardEvent) => {
+    e.preventDefault() // Prevent default action for the key
     if (e.key === key && !e.repeat && !isKeyDown.current) {
       isKeyDown.current = true
       onDown()
@@ -18,6 +23,7 @@ export const useKey = (key: string, onDown: () => void, onUp: () => void) => {
   }, [isKeyDown, onUp])
 
   const setKeyUp = useCallback((e: KeyboardEvent) => {
+    e.preventDefault() // Prevent default action for the key
     if (e.key === key) {
       onUp()
       isKeyDown.current = false

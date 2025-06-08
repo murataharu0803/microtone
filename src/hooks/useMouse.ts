@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from 'react'
 
-export type MousePosition = { x: number, y: number } | null
+import Position from '@/types/Position'
+
+export type MousePosition = Position | null
 
 export const useMouse = (
   ref: React.RefObject<Element  | null> | null,
@@ -8,21 +10,11 @@ export const useMouse = (
   onUp: () => void = () => void 0,
   onMove: (isPressed: boolean) => void = () => void 0,
 ) => {
-  // const position = useRef<MousePosition>(null)
-
   const setMouseDown = useCallback(onDown, [onDown])
   const setMouseUp = useCallback(onUp, [onUp])
   const setMouseMove = useCallback((e: Event) => {
     const event = e as MouseEvent
     onMove(event.buttons > 0)
-    // const target = event.currentTarget as Element
-    // if (!target) return
-    // const rect = target.getBoundingClientRect()
-    // const isLeave = e.type === 'mouseleave'
-    // // position.current = !isLeave ? {
-    //   x: event.clientX - rect.left,
-    //   y: event.clientY - rect.top,
-    // } : null
   }, [onMove])
   const setMouseLeave = useCallback(
     (e: Event) => { if ((e as MouseEvent).buttons > 0) onUp() },
