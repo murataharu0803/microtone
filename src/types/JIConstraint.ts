@@ -7,5 +7,5 @@ export default interface JIConstraint {
 export const defaultJIConstraint: JIConstraint = {
   maxPrime: 13,
   maxFactor: 15,
-  maxDivision: 10,
+  maxDivision: 3,
 }

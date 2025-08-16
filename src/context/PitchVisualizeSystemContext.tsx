@@ -1,6 +1,7 @@
 import { createContext } from 'react'
 
 import AudioManager from '@/types/AudioManager'
+import Axis, { defaultAxis } from '@/types/Axis'
 import JIConstraint, { defaultJIConstraint } from '@/types/JIConstraint'
 
 interface PitchVisualizeSystemContextProps {
@@ -9,10 +10,8 @@ interface PitchVisualizeSystemContextProps {
   endPitch: number
   JIConstraint: JIConstraint
   audioManager: AudioManager | null
-  // playNote: (frequency: number, token?: string) => string | null
-  // stopNote: (token: string) => string | null
+  axis: Axis[]
 }
-
 
 const PitchVisualizeSystemContext = createContext<PitchVisualizeSystemContextProps>({
   baseFrequency: 440 * Math.pow(2, -9 / 12), // Middle C
@@ -20,8 +19,7 @@ const PitchVisualizeSystemContext = createContext<PitchVisualizeSystemContextPro
   endPitch: 3,
   JIConstraint: defaultJIConstraint,
   audioManager: null,
-  // playNote: () => null,
-  // stopNote: () => null,
+  axis: defaultAxis,
 })
 
 export default PitchVisualizeSystemContext

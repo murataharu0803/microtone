@@ -36,6 +36,7 @@ interface PitchLadderLineProps {
   isPlayable?: boolean
   note: Note
   color: string
+  width?: number
   shrink?: number
 }
 
@@ -43,6 +44,7 @@ const PitchLadderLine: React.FC<PitchLadderLineProps> = ({
   isPlayable = true,
   note,
   color,
+  width: strokeWidth = 1,
   shrink = 0,
 }) => {
   const { startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
@@ -57,7 +59,7 @@ const PitchLadderLine: React.FC<PitchLadderLineProps> = ({
   const points = [l[0], l[1], r[1], r[0]].map(p => `${p.x},${p.y}`).join(' ')
 
   const box = <>
-    <PitchLadderLineLine note={note} color={color} shrink={shrink} />
+    <PitchLadderLineLine note={note} color={color} width={strokeWidth} shrink={shrink} />
     {isPlayable && <polygon
       className="pitch-ladder-box"
       points={points}

@@ -9,6 +9,7 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 import { useKey } from '@/hooks/useKey'
 
 import AudioManager from '@/types/AudioManager'
+import { defaultAxis } from '@/types/Axis'
 import JIConstraint, { defaultJIConstraint } from '@/types/JIConstraint'
 
 interface PitchVisualizeSystemProps {
@@ -39,8 +40,7 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       endPitch,
       JIConstraint,
       audioManager: audioManager.current,
-      // playNote: audioManager.play.bind(audioManager),
-      // stopNote: audioManager.stop.bind(audioManager),
+      axis: defaultAxis,
     }}
   >
     <PitchCircle

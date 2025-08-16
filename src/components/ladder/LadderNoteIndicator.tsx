@@ -42,11 +42,7 @@ const LadderNoteIndicator: React.FC = () => {
     return () => { removeSubscription?.() }
   }, [audioManager])
 
-  return <g
-    fontSize="10"
-    fill="white"
-    textAnchor="middle"
-  >
+  return <g>
     {ups.map((_, index) =>
       <Arrow
         key={index}

@@ -12,7 +12,13 @@ export default class AudioManager {
   }
 
   public get frequencyList(): number[] {
-    return Array.from(this.tones.values()).map(tone => tone.frequency || 0).filter(Boolean)
+    return Array.from(this.tones.values())
+      .map(tone => tone.frequency || 0).filter(Boolean)
+  }
+
+  public get dimensionsList(): number[][] {
+    return Array.from(this.tones.values())
+      .map(tone => tone.dimensions).filter(Boolean) as number[][]
   }
 
   constructor() {
@@ -26,24 +32,24 @@ export default class AudioManager {
     return tone?.isActive ? token : null
   }
 
-  public play(frequency: number, token?: string) {
+  public play(frequency: number, token?: string, dimensions?: number[]) {
     if (token) {
-      const tone = this.change(frequency, token)
+      const tone = this.change(frequency, token, dimensions)
       if (tone) return token
     }
 
     const tone = new Tone(this.ctx)
     const newToken = Math.random().toString(36).substring(2, 15)
-    tone.play(frequency)
+    tone.play(frequency, dimensions)
     this.tones.set(newToken, tone)
     this.emitChange()
     return newToken
   }
 
-  public change(frequency: number, token: string) {
+  public change(frequency: number, token: string, dimensions?: number[]) {
     const tone = this.tones.get(token)
     if (!tone) return null
-    tone.change(frequency)
+    tone.change(frequency, dimensions)
     this.emitChange()
     return token
   }

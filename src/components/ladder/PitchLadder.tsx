@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import LadderChordIndicator from '@/components/ladder/LadderChordIndicator'
 import LadderNoteIndicator from '@/components/ladder/LadderNoteIndicator'
 import PitchLadderMouse from '@/components/ladder/PitchLadderMouse'
 import PitchLadderSet from '@/components/ladder/PitchLadderSet'
@@ -89,6 +90,7 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
         isPlayable={isSnapped && snapToJI}
         pitches={JIPitches}
       />
+      <LadderChordIndicator />
       {!isSnapped && <PitchLadderMouse />}
     </g>
   </PitchLadderContext.Provider>

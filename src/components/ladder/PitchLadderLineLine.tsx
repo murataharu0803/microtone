@@ -10,7 +10,9 @@ const PitchLadderLineLine: React.FC<{
   note: Note
   color: string
   shrink?: number
-}> = ({ note, color, shrink = 0 }) => {
+  width?: number
+  dashed?: boolean
+}> = ({ note, color, shrink = 0, width: strokeWidth = 1, dashed = false }) => {
   const { startPitch, endPitch } = useContext(PitchVisualizeSystemContext)
   const { startPoint, endPoint, width } = React.useContext(PitchLadderContext)
 
@@ -31,7 +33,8 @@ const PitchLadderLineLine: React.FC<{
     key={note.pitch}
     {...endPointsValues}
     stroke={color}
-    width={0.5}
+    width={strokeWidth}
+    strokeDasharray={dashed ? '5,5' : undefined}
   />
 }
 

@@ -81,6 +81,7 @@ const PitchLadderMouse: React.FC = () => {
     key={note.pitch}
     isPlayable={false}
     note={note}
+    width={2}
     color="white"
   />
 }

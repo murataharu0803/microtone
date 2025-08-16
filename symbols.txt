@@ -1,0 +1,15 @@
+. 1 C
+> 2 C
+V 3 G
+T 5 E #G
+S 7 bB
+VV 9 D
+L 11 #F
+J 13 bA
+VT 3*5 B
+H 17 bD
+N 19 bE
+VS 3*7 F
+X 23 G-
+Y 29 B-
+Z 31 B+

@@ -1,18 +1,18 @@
 import React, { useContext, useRef } from 'react'
 
-import { PitchGridContext } from '@/components/grid/PitchGrid'
+import Arrow from '@/components/Arrow'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { OVERTONES_COLORS, PRIMES } from '@/utils/overtones'
-import { getHalfSectorPath, getRingPath } from '@/utils/sector'
-
 import { useNote } from '@/hooks/useNote'
 
-import Arrow from '@/components/Arrow'
+import { getPointByRadiusAndAngle } from '@/utils/math'
+import { OVERTONES_COLORS } from '@/utils/overtones'
+import { getHalfSectorPath, getRingPath } from '@/utils/sector'
+
+import { getFactorFromDimensions } from '@/types/Axis'
 import Position from '@/types/Position'
 import { DOWN, LEFT, R_180, RIGHT, UP } from '@/types/constants'
-import { getPointByRadiusAndAngle } from '@/utils/math'
 
 const ZERO_COLOR = '#444444'
 const GAP = 4
@@ -85,32 +85,31 @@ interface PitchGridDotProps {
   triggerKey: string
 }
 
-const PitchGridDot: React.FC<PitchGridDotProps> = ({ position, d1, d2, d3, d, dn, triggerKey }) => {
+const PitchGridDot: React.FC<PitchGridDotProps> = ({
+  position,
+  d1,
+  d2,
+  d3,
+  d,
+  dn = 0,
+  triggerKey,
+}) => {
   const {
     baseFrequency,
     startPitch,
     endPitch,
   } = useContext(PitchVisualizeSystemContext)
-  const { axis } = useContext(PitchGridContext)
+  const { axis } = useContext(PitchVisualizeSystemContext)
 
-  const power1 = axis[0].factor
-  const power2 = axis[1].factor
-  const power3 = axis[2].factor
-  const powerN = d ? axis[d - 1]?.factor || [] : []
-  const factors = PRIMES.map((p, i) => {
-    const power = (dn || 0) * (powerN[i] || 0) +
-      d1 * (power1[i] || 0) +
-      d2 * (power2[i] || 0) +
-      d3 * (power3[i] || 0)
-    return Math.pow(p, power)
-  })
-  const factor = factors.reduce((acc, val) => acc * val, 1)
+  const dimensions =
+    [d1, d2, d3, d === 4 ? dn : 0, d === 5 ? dn : 0, d === 6 ? dn : 0]
+  const factor = getFactorFromDimensions(dimensions, axis)
   const frequency = baseFrequency * factor
   const pitch = Math.log2(factor)
   const inRange = pitch >= startPitch && pitch <= endPitch
 
   const buttonRef = useRef<SVGCircleElement>(null)
-  const { active } = useNote(frequency, buttonRef, triggerKey)
+  const { active } = useNote(frequency, buttonRef, triggerKey, dimensions)
 
   const { x, y } = getPointByRadiusAndAngle(position, 34, d1 > 0 ? UP : DOWN)
 

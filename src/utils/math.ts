@@ -139,3 +139,9 @@ export const moveInLimit = (
   const newValue = value + delta
   return Math.max(min, Math.min(max, newValue))
 }
+
+export const uniqueArray = <T>(arr: T[], eq: (a: T, b: T) => boolean): T[] => {
+  const unique: T[] = []
+  for (const item of arr) if (!unique.some(u => eq(u, item))) unique.push(item)
+  return unique
+}

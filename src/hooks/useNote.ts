@@ -11,6 +11,7 @@ export const useNote = (
   frequency: number,
   ref: React.RefObject<Element | null> | null,
   key?: string | null,
+  dimensions?: number[],
 ) => {
   const { audioManager } = useContext(PitchVisualizeSystemContext)
 
@@ -18,9 +19,9 @@ export const useNote = (
   const [keyState, setKeyState] = useState<string | null>(null)
 
   const play = useCallback((...[state, setState]: StateTuple) => {
-    if (state) setState(audioManager?.play(frequency, state) || null)
-    else setState(audioManager?.play(frequency) || null)
-  }, [frequency, audioManager])
+    if (state) setState(audioManager?.play(frequency, state, dimensions) || null)
+    else setState(audioManager?.play(frequency, '', dimensions) || null)
+  }, [frequency, dimensions, audioManager])
 
   const stop = useCallback((...[state, setState]: StateTuple) => {
     if (state) setState(audioManager?.stop(state) || null)
