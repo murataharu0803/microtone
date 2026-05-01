@@ -1,8 +1,5 @@
-import { findClosest } from '@/utils/math'
-import { getOvertones } from '@/utils/overtones'
 
 import { R_360, R_90 } from '@/types/constants'
-import JIConstraint from '@/types/JIConstraint'
 
 type NoteClassConstructorOptions = {
   type: 'pitch' | 'factor' | 'angle'
@@ -32,25 +29,6 @@ export default class NoteClass {
     this.factorClass = Math.pow(2, pitch)
     this.pitchClass = pitch
     this.angle = pitch * R_360 - R_90
-  }
-
-  public quantizeToJI(constraint: JIConstraint): {
-    noteClass: NoteClass
-    factorization: number[]
-    color: string
-    error: number
-  } {
-    const closest = findClosest(
-      getOvertones(constraint),
-      c => {
-        const abs = Math.abs(c.noteClass.pitchClass - this.pitchClass) % 1
-        return abs > 0.5 ? 1 - abs : abs
-      },
-    )
-    return {
-      ...closest,
-      error: this.pitchClass - closest.noteClass.pitchClass,
-    }
   }
 
   public quantizeToET(ET: number | 'standard' | 'oct'): {

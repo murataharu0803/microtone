@@ -1,6 +1,3 @@
-import { PRIMES_SYMBOLS_DOWN, PRIMES_SYMBOLS_UP } from '@/utils/overtones'
-
-import JIConstraint from '@/types/JIConstraint'
 import Note from '@/types/Note'
 
 const NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
@@ -22,7 +19,7 @@ export const ETNotation = (
   })
   const { stepClass, error } = note.quantizeToET(ET)
 
-  if (isOctave) return `${note.octave + 4}+${note.pitchClass.toFixed(4).replace('0.', '')}`
+  if (isOctave) return `${note.octave}+${note.pitchClass.toFixed(4).replace('0.', '')}`
 
   const errorString = error > ERROR_MARGIN ? `+${error.toFixed(3).replace('0.', '.')}` :
     error < -ERROR_MARGIN ? `-${Math.abs(error).toFixed(3).replace('0.', '.')}` : ''
@@ -38,28 +35,4 @@ export const ETNotation = (
     : `${stepClass}${','.repeat(-note.octave)}`
 
   return `${pitchString}${errorString}/${stepPerOctave}ET`
-}
-
-export const JINotation = (
-  frequency: number,
-  baseFrequency: number,
-  constraint: JIConstraint,
-) => {
-  const note = new Note({ baseFrequency, type: 'factor', value: frequency / baseFrequency })
-  const { factorization, error } = note.quantizeToJI(constraint)
-
-  let text = note.octave > 0 ? '>'.repeat(note.octave) :
-    note.octave < 0 ? '<'.repeat(-note.octave) : ''
-  for (let i = 0; i < factorization.length; i++) {
-    const count = factorization[i]
-    if (count === 0) continue
-    if (count > 0) text = text + PRIMES_SYMBOLS_UP[i].repeat(count)
-    else text = PRIMES_SYMBOLS_DOWN[i].repeat(-count) + text
-  }
-  if (text === '') text = '.'
-
-  const errorString = error > ERROR_MARGIN ? `+${error.toFixed(4).replace('0.', '')}` :
-    error < -ERROR_MARGIN ? `-${Math.abs(error).toFixed(4).replace('0.', '')}` : ''
-
-  return text + errorString
 }

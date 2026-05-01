@@ -27,12 +27,12 @@ const PitchGrid: React.FC<PitchGridProps> = ({
   const [d, setD] = useState<number | null>(null)
   const [dn, setDn] = useState<number>(0)
 
-  const [d1, setD1] = useState<number>(1)
+  const [d1, setD1] = useState<number>(0)
   const [d2, setD2] = useState<number>(0)
   const [d3, setD3] = useState<number>(0)
 
-  const xAxis = axis[2]
-  const yAxis = axis[1]
+  const xAxis = axis[1]
+  const yAxis = axis[2]
 
   const xs = Array.from(
     { length: xAxis.display.end - xAxis.display.start + 1 },
@@ -43,8 +43,8 @@ const PitchGrid: React.FC<PitchGridProps> = ({
     (_, i) => i + yAxis.display.start,
   )
   const dots = xs.flatMap((x, xi) => ys.map((y, yi) => ({
-    d2: y,
-    d3: x,
+    d2: x,
+    d3: y,
     x: center.x + x * spacing.x,
     y: center.y + y * spacing.y,
     triggerKey: triggerKeys[yi]?.[xi],

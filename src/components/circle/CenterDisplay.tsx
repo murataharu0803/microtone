@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import PitchCircleContext from '@/context/PitchCircleContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { ETNotation, JINotation } from '@/utils/pitchNotation'
+import { ETNotation } from '@/utils/pitchNotation'
 
 import Note from '@/types/Note'
 
@@ -13,7 +13,7 @@ const LINE_HEIGHT = 32
 
 const FrequencyDisplay: React.FC<{ note: Note }> = ({ note }) => {
   const { center } = useContext(PitchCircleContext)
-  const { baseFrequency, JIConstraint } = useContext(PitchVisualizeSystemContext)
+  const { baseFrequency } = useContext(PitchVisualizeSystemContext)
   const frequency = note.frequency
 
   return <g
@@ -29,17 +29,14 @@ const FrequencyDisplay: React.FC<{ note: Note }> = ({ note }) => {
       stroke="#888888"
       strokeWidth={1}
     />
-    <text x={center.x} y={center.y - LINE_HEIGHT * 5 / 4}>
+    <text x={center.x} y={center.y - LINE_HEIGHT * 3 / 4}>
       {frequency.toFixed(2)}Hz
     </text>
-    <text x={center.x} y={center.y - LINE_HEIGHT / 4}>
+    <text x={center.x} y={center.y + LINE_HEIGHT / 4}>
       {ETNotation(frequency, baseFrequency, 'oct')}
     </text>
-    <text x={center.x} y={center.y + LINE_HEIGHT * 3 / 4}>
+    <text x={center.x} y={center.y + LINE_HEIGHT * 5 / 4}>
       {ETNotation(frequency, baseFrequency, 'standard')}
-    </text>
-    <text x={center.x} y={center.y + LINE_HEIGHT * 7 / 4}>
-      {JINotation(frequency, baseFrequency, JIConstraint)}
     </text>
   </g>
 }

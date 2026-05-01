@@ -1,11 +1,9 @@
 export default interface JIConstraint {
-  maxPrime: number
-  maxFactor: number
-  maxDivision: number
+  maxDimension: number
+  maxComplexity: number
 }
 
 export const defaultJIConstraint: JIConstraint = {
-  maxPrime: 13,
-  maxFactor: 15,
-  maxDivision: 10,
+  maxDimension: 6,
+  maxComplexity: 4,
 }

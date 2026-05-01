@@ -4,14 +4,14 @@ import { PitchGridContext } from '@/components/grid/PitchGrid'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { OVERTONES_COLORS, PRIMES } from '@/utils/overtones'
+import { Dimension, DIMENSION_COLORS, PRIMES } from '@/utils/overtones'
 import { getHalfSectorPath, getRingPath } from '@/utils/sector'
 
 import { useNote } from '@/hooks/useNote'
 
 import Arrow from '@/components/Arrow'
 import Position from '@/types/Position'
-import { DOWN, LEFT, R_180, RIGHT, UP } from '@/types/constants'
+import { DOWN, R_180, R_90, UP } from '@/types/constants'
 import { getPointByRadiusAndAngle } from '@/utils/math'
 
 const ZERO_COLOR = '#444444'
@@ -41,6 +41,7 @@ const dividedRing = (
   pos: 'out' | 'mid' | 'in',
   d: number,
   color: string,
+  dir: number,
 ) => {
   const radius = pos === 'out' ? 24 : pos === 'mid' ? 16 : 8
   const width = 4
@@ -55,8 +56,10 @@ const dividedRing = (
   }
   if (d === 0) return null
 
-  const angles = Array.from({ length: Math.abs(d) - 1 }, (_, i) => -R_180 * (i + 1) / d)
-  angles.push(LEFT, RIGHT)
+  const angles = Array.from(
+    { length: Math.abs(d) - 1 }, (_, i) => dir - R_90 + R_180 * (i + 1) / d,
+  )
+  angles.push(dir - R_90, dir + R_90)
 
   return <g>
     {Math.abs(d) >= 1 && <defs>
@@ -64,11 +67,11 @@ const dividedRing = (
     </defs>}
     <g mask={`url(#sector-gap-mask-${id}-${pos})`}>
       <path
-        d={getHalfSectorPath(center, innerRadius, radius, d > 0 ? 'up' : 'down')}
+        d={getHalfSectorPath(center, innerRadius, radius, d > 0 ? dir : dir + R_180)}
         fill={color}
       />
       {pos === 'out' && <path
-        d={getHalfSectorPath(center, innerRadius, radius, d > 0 ? 'down' : 'up')}
+        d={getHalfSectorPath(center, innerRadius, radius, d > 0 ? dir + R_180 : dir)}
         fill={ZERO_COLOR}
       />}
     </g>
@@ -121,17 +124,36 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({ position, d1, d2, d3, d, dn
       r={24}
       fill={active ? '#444444' : 'transparent'}
     />
-    {dividedRing(`d2-${d2}-d3-${d3}`, position, 'out', d2, OVERTONES_COLORS[1] || '#888888')}
-    {dividedRing(`d2-${d2}-d3-${d3}`, position, 'mid', d3, OVERTONES_COLORS[2] || '#888888')}
-    {d && dn &&
-      dividedRing(`d2-${d2}-d3-${d3}`, position, 'in', dn, OVERTONES_COLORS[d - 1] || '#888888')
-    }
+    {dividedRing(
+      `d2-${d2}-d3-${d3}`,
+      position,
+      'out',
+      d2,
+      DIMENSION_COLORS[Dimension.D2] || '#888888',
+      0,
+    )}
+    {dividedRing(
+      `d2-${d2}-d3-${d3}`,
+      position,
+      'mid',
+      d3,
+      DIMENSION_COLORS[Dimension.D3] || '#888888',
+      -R_90,
+    )}
+    {d && dn && dividedRing(
+      `d2-${d2}-d3-${d3}`,
+      position,
+      'in',
+      dn,
+      DIMENSION_COLORS[Dimension[`D${d}` as keyof typeof Dimension]] || '#888888',
+      - R_90 / 2,
+    )}
     {Array.from({ length: Math.abs(d1) }, (_, i) => <Arrow
       key={i}
       c={{ x, y: y + 5 * i * (d1 > 0 ? -1 : 1) }}
       angle={d1 > 0 ? UP : DOWN}
       length={10}
-      color={OVERTONES_COLORS[0] || '#888888'}
+      color={DIMENSION_COLORS[Dimension.D1] || '#888888'}
     />)}
   </g>
 }

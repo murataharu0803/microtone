@@ -54,9 +54,10 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
     { length: Math.ceil(endPitch) - Math.floor(startPitch) + 1 },
     (_, i) => i + Math.floor(startPitch),
   )
-  const JITones = getOvertones(JIConstraint).map(overtone => ({
+  const JITones = getOvertones(JIConstraint, [startPitch, endPitch]).map(overtone => ({
     ...overtone,
-    shrink: 0.05 * overtone.maxPrime,
+    note: new Note({ baseFrequency, type: 'pitch', value: overtone.pitch }),
+    shrink: 0.05 * overtone.complexity,
   }))
   const TETTones = Array.from({ length: TET  }, (_, step) => ({
     noteClass: new NoteClass({ type: 'pitch', value: step / TET }),
@@ -73,7 +74,6 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
       })).filter(tone => tone.note.pitch >= startPitch && tone.note.pitch <= endPitch),
     ).flat()
 
-  const JIPitches = expandToAllPitches(JITones)
   const TETPitches = expandToAllPitches(TETTones)
 
   return <PitchLadderContext.Provider
@@ -87,7 +87,7 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
       />
       <PitchLadderSet
         isPlayable={isSnapped && snapToJI}
-        pitches={JIPitches}
+        pitches={JITones}
       />
       {!isSnapped && <PitchLadderMouse />}
     </g>

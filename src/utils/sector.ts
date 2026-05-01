@@ -1,4 +1,4 @@
-import { R_180, R_360 } from '@/types/constants'
+import { R_180, R_360, R_90 } from '@/types/constants'
 import Position from '@/types/Position'
 
 const getSectorPath = (
@@ -38,10 +38,10 @@ const getHalfSectorPath = (
   center: Position,
   innerRadius: number,
   outerRadius: number,
-  direction: 'up' | 'down',
+  direction: number,
 ) => {
-  const startAngle = direction === 'up' ? -R_180 : 0
-  const endAngle = direction === 'up' ? 0 : R_180
+  const startAngle = direction - R_90
+  const endAngle = direction + R_90
   return getSectorPath(center, innerRadius, outerRadius, startAngle, endAngle)
 }
 

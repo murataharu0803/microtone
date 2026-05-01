@@ -1,4 +1,3 @@
-import JIConstraint from '@/types/JIConstraint'
 import NoteClass from '@/types/NoteClass'
 
 type NoteConstructorOptions = {
@@ -68,15 +67,6 @@ export default class Note {
 
   get angle(): number {
     return this.class.angle
-  }
-
-  public quantizeToJI(constraint: JIConstraint): {
-    noteClass: NoteClass
-    factorization: number[]
-    color: string
-    error: number
-  } {
-    return this.class.quantizeToJI(constraint)
   }
 
   public quantizeToET(ET: number | 'standard' | 'oct'): {

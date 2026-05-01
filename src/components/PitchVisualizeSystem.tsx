@@ -44,18 +44,18 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
     }}
   >
     <PitchCircle
-      center={{ x: 600, y: 500 }}
+      center={{ x: 640, y: 500 }}
       startRadius={250}
       radiusStep={50}
     />
     <PitchLadder
-      startPoint={{ x: 1170, y: 900 }}
-      endPoint={{ x: 1170, y: 100 }}
+      startPoint={{ x: 1200, y: 900 }}
+      endPoint={{ x: 1200, y: 100 }}
       width={150}
     />
     <PitchGrid
-      center={{ x: 1600, y: 500 }}
-      spacing={{ x: 100, y: -100 }}
+      center={{ x: 800, y: 1280 }}
+      spacing={{ x: 120, y: -120 }}
       triggerKeys={[
         ['', 'x', 's', 'w'],
         ['', 'c', 'd', 'e'],

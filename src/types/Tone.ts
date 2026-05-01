@@ -1,4 +1,5 @@
 const ATTACK = 0.001 // Attack time in seconds
+const DECAY = 2 // Decay time in seconds
 const RELEASE = 0.2 // Release time in seconds
 const TRANSITION = 0.05 // Transition time in seconds
 
@@ -31,6 +32,11 @@ export default class Tone {
     this.gain.gain.linearRampToValueAtTime(0.1, this.ctx.currentTime + ATTACK)
 
     this.isActive = true
+
+    setTimeout(() => {
+      if (this.isActive)
+        this.gain.gain.exponentialRampToValueAtTime(0.02, this.ctx.currentTime + DECAY)
+    }, ATTACK * 1000 + 10)
   }
 
   public change(frequency: number) {

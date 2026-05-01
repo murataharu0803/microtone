@@ -28,7 +28,6 @@ const PitchLadderLineLine: React.FC<{
 
   return <line
     className="pitch-ladder-line"
-    key={note.pitch}
     {...endPointsValues}
     stroke={color}
     width={0.5}
