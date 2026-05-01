@@ -57,13 +57,11 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       center={{ x: 800, y: 1280 }}
       spacing={{ x: 120, y: -120 }}
       triggerKeys={[
-        ['', 'x', 's', 'w'],
-        ['', 'c', 'd', 'e'],
-        ['', 'v', 'f', 'r'],
-        ['', 'b', 'g', 't'],
-        ['', 'n', 'h', 'y'],
-        ['', 'm', 'j', 'u'],
-        ['', ',', 'k', 'i'],
+        [],
+        ['x', 'c', 'v', 'b', 'n', 'm', ','],
+        ['s', 'd', 'f', 'g', 'h', 'j', 'k'],
+        ['w', 'e', 'r', 't', 'y', 'u', 'i'],
+        ['2', '3', '4', '5', '6', '7', '8'],
       ]}
     />
   </PitchVisualizeSystemContext.Provider>

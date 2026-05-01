@@ -56,12 +56,12 @@ const PitchGrid: React.FC<PitchGridProps> = ({
   useKey('ArrowDown', () => setD2(moveInLimit(d2, -1, [axis[1].shift.start, axis[1].shift.end])))
   useKey('ArrowRight', () => setD3(moveInLimit(d3, 1, [axis[2].shift.start, axis[2].shift.end])))
   useKey('ArrowLeft', () => setD3(moveInLimit(d3, -1, [axis[2].shift.start, axis[2].shift.end])))
-  useKey('4', () => { setD(4); setDn(1) }, () => { setD(null); setDn(0) })
-  useKey('5', () => { setD(5); setDn(1) }, () => { setD(null); setDn(0) })
-  useKey('6', () => { setD(6); setDn(1) }, () => { setD(null); setDn(0) })
-  useKey('1', () => { setD(4); setDn(-1) }, () => { setD(null); setDn(0) })
-  useKey('2', () => { setD(5); setDn(-1) }, () => { setD(null); setDn(0) })
-  useKey('3', () => { setD(6); setDn(-1) }, () => { setD(null); setDn(0) })
+  useKey('9', () => { setD(4); setDn(-1) }, () => { setD(null); setDn(0) })
+  useKey('-', () => { setD(5); setDn(-1) }, () => { setD(null); setDn(0) })
+  useKey('[', () => { setD(6); setDn(-1) }, () => { setD(null); setDn(0) })
+  useKey('0', () => { setD(4); setDn(1) }, () => { setD(null); setDn(0) })
+  useKey('=', () => { setD(5); setDn(1) }, () => { setD(null); setDn(0) })
+  useKey(']', () => { setD(6); setDn(1) }, () => { setD(null); setDn(0) })
 
   return <PitchGridContext.Provider value={{ center, spacing, axis }}>
     <g>
