@@ -146,7 +146,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({ position, dimensionUnits, t
       position,
       'in',
       dn,
-      DIMENSION_COLORS[Dimension[`D${d}` as keyof typeof Dimension]] || '#888888',
+      DIMENSION_COLORS[d] || '#888888',
       - R_90 / 2,
     )}
     {Array.from({ length: Math.abs(d1) }, (_, i) => <Arrow
