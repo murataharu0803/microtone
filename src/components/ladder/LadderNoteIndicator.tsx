@@ -1,27 +1,26 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 
 import Arrow from '@/components/Arrow'
 import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
 
 import PitchLadderContext from '@/context/PitchLadderContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+import { usePlayingFrequencies } from '@/hooks/usePlayingFrequencies'
+
+import { getAngle, getPointByRadiusAndAngle } from '@/utils/math'
 
 import { R_180 } from '@/types/constants'
 import Note from '@/types/Note'
-import { getAngle, getPointByRadiusAndAngle } from '@/utils/math'
 
 const LadderNoteIndicator: React.FC = () => {
   const {
-    audioManager,
     baseFrequency,
     startPitch,
     endPitch,
   } = useContext(PitchVisualizeSystemContext)
   const { startPoint, endPoint } = React.useContext(PitchLadderContext)
 
-  const [frequencies, setFrequencies] = React.useState<number[]>(
-    audioManager?.frequencyList || [],
-  )
+  const { frequencies } = usePlayingFrequencies()
 
   const notes = frequencies.map(frequency =>
     new Note({ baseFrequency, type: 'frequency', value: frequency }),
@@ -34,13 +33,6 @@ const LadderNoteIndicator: React.FC = () => {
   const angle = getAngle(startPoint, endPoint)
   const uc = (i: number) => getPointByRadiusAndAngle(endPoint, 10 + 5 * i, angle)
   const dc = (i: number) => getPointByRadiusAndAngle(startPoint, 10 + 5 * i, angle + R_180)
-
-  useEffect(() => {
-    const removeSubscription = audioManager?.subscribe(
-      () => setFrequencies(audioManager?.frequencyList || []),
-    )
-    return () => { removeSubscription?.() }
-  }, [audioManager])
 
   return <g
     fontSize="10"

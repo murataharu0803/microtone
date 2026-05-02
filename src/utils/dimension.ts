@@ -1,15 +1,6 @@
+import { Dimension, DimensionRange } from '@/types/Dimension'
 import JIConstraint from '@/types/JIConstraint'
-
 import NoteClass from '@/types/NoteClass'
-
-export enum Dimension {
-  D1 = 'D1',
-  D2 = 'D2',
-  D3 = 'D3',
-  D4 = 'D4',
-  D5 = 'D5',
-  D6 = 'D6',
-}
 
 export const ALL_DIMENSIONS = Object.values(Dimension) as Dimension[]
 
@@ -20,13 +11,13 @@ export const PRIMES = [
   // 17, 19, 23, 29, 31,
 ]
 
-export const DIMENSION_FREQ_RATIO = {
+export const DIMENSION_FACTOR = {
   [Dimension.D1]:  2,
   [Dimension.D2]:  3 /  2,
   [Dimension.D3]:  5 /  4,
   [Dimension.D4]:  7 /  4,
-  [Dimension.D5]: 11 /  8,
-  [Dimension.D6]: 13 /  8,
+  [Dimension.D5]: 11 /  4,
+  [Dimension.D6]: 13 /  4,
 } as Record<Dimension, number>
 
 export const DIMENSION_COMPLEXITY = {
@@ -56,6 +47,33 @@ export const DIMENSION_SYMBOLS = {
   [Dimension.D6]: 'K',
 } as Record<Dimension, string>
 
+export const defaultDimensionRanges: Record<Dimension, DimensionRange> = {
+  [Dimension.D1]: {
+    shift: { start: -1, end: 3 },
+    display: { start: 1, end: 1 },
+  },
+  [Dimension.D2]: {
+    shift: { start: -2, end: 2 },
+    display: { start: -3, end: 3 },
+  },
+  [Dimension.D3]: {
+    shift: { start: -2, end: 2 },
+    display: { start: -2, end: 2 },
+  },
+  [Dimension.D4]: {
+    shift: { start: -1, end: 1 },
+    display: { start: 0, end: 0 },
+  },
+  [Dimension.D5]: {
+    shift: { start: -1, end: 1 },
+    display: { start: 0, end: 0 },
+  },
+  [Dimension.D6]: {
+    shift: { start: -1, end: 1 },
+    display: { start: 0, end: 0 },
+  },
+}
+
 export const getOvertones = (constraint: JIConstraint, octaveRange: [number, number]) => {
   const { maxDimension, maxComplexity } = constraint
   const allDimensions = ALL_DIMENSIONS.slice(0, maxDimension)
@@ -84,7 +102,7 @@ export const getOvertones = (constraint: JIConstraint, octaveRange: [number, num
   const filteredCombinations = allDimensionCombinations.filter(c => {
     const factor = Object.entries(c).reduce((acc, [dimension, value]) => {
       const dim = dimension as Dimension
-      return acc + Math.log2(DIMENSION_FREQ_RATIO[dim]) * value
+      return acc + Math.log2(DIMENSION_FACTOR[dim]) * value
     }, 0)
     const complexity = Object.entries(c).reduce((acc, [dimension, value]) => {
       const dim = dimension as Dimension
@@ -105,7 +123,7 @@ export const getOvertones = (constraint: JIConstraint, octaveRange: [number, num
 
     const pitch = Object.entries(c).reduce((acc, [dimension, value]) => {
       const dim = dimension as Dimension
-      return acc + Math.log2(DIMENSION_FREQ_RATIO[dim]) * value
+      return acc + Math.log2(DIMENSION_FACTOR[dim]) * value
     }, 0)
     const noteClass = new NoteClass({ type: 'pitch', value: pitch })
 

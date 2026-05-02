@@ -9,8 +9,6 @@ interface PitchVisualizeSystemContextProps {
   endPitch: number
   JIConstraint: JIConstraint
   audioManager: AudioManager | null
-  // playNote: (frequency: number, token?: string) => string | null
-  // stopNote: (token: string) => string | null
 }
 
 
@@ -20,8 +18,6 @@ const PitchVisualizeSystemContext = createContext<PitchVisualizeSystemContextPro
   endPitch: 3,
   JIConstraint: defaultJIConstraint,
   audioManager: null,
-  // playNote: () => null,
-  // stopNote: () => null,
 })
 
 export default PitchVisualizeSystemContext

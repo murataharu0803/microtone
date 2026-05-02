@@ -1,24 +1,16 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 
 import PitchLine from '@/components/circle/PitchLine'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
+import { usePlayingFrequencies } from '@/hooks/usePlayingFrequencies'
 
 import Note from '@/types/Note'
 
 const NoteIndicator: React.FC = () => {
-  const { audioManager, baseFrequency } = useContext(PitchVisualizeSystemContext)
+  const { baseFrequency } = useContext(PitchVisualizeSystemContext)
 
-  const [frequencies, setFrequencies] = React.useState<number[]>(
-    audioManager?.frequencyList || [],
-  )
-
-  useEffect(() => {
-    const removeSubscription = audioManager?.subscribe(
-      () => setFrequencies(audioManager?.frequencyList || []),
-    )
-    return () => { removeSubscription?.() }
-  }, [audioManager])
+  const { frequencies } = usePlayingFrequencies()
 
   return <g
     fontSize="10"

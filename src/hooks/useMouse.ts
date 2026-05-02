@@ -34,6 +34,4 @@ export const useMouse = (
       refCurrent?.removeEventListener('mousemove', setMouseMove)
     }
   }, [setMouseDown, setMouseUp, setMouseMove, ref, setMouseLeave])
-
-  // return { position }
 }

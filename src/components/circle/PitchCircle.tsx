@@ -4,7 +4,7 @@ import CenterDisplay from '@/components/circle/CenterDisplay'
 import JIPitchGroup from '@/components/circle/JIPitchGroup'
 import NoteIndicator from '@/components/circle/NoteIndicator'
 import PitchCircleMouse from '@/components/circle/PitchCircleMouse'
-import TETPitchGroup from '@/components/circle/TETPtichGroup'
+import TETPitchGroup from '@/components/circle/TETPitchGroup'
 
 import PitchCircleContext from '@/context/PitchCircleContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
@@ -20,12 +20,14 @@ interface PitchCircleProps {
   center: Position
   startRadius: number
   radiusStep: number
+  mouseSnap: number
 }
 
 const PitchCircle: React.FC<PitchCircleProps> = ({
   center,
   startRadius,
   radiusStep,
+  mouseSnap,
 }) => {
   const { audioManager, startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
 
@@ -52,6 +54,7 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       center,
       startRadius,
       radiusStep,
+      mouseSnap,
     }}
   >
     <g>
@@ -59,13 +62,13 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       <NoteIndicator />
       <JIPitchGroup
         isPlayable={isSnapped && snapToJI}
-        // triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace']}
+        // triggerKeys={[]} // for now keys are used for JI grid
       />
       {!isSnapped && <PitchCircleMouse />}
       <TETPitchGroup
         isPlayable={isSnapped && !snapToJI}
         TET={12}
-        // triggerKeys={['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']']}
+        // triggerKeys={[]} // for now keys are used for JI grid
       />
       <CenterDisplay />
     </g>

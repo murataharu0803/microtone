@@ -9,7 +9,8 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 
-import { getOvertones } from '@/utils/overtones'
+import { getOvertones } from '@/utils/dimension'
+import { getOctavesInRange } from '@/utils/pitch'
 
 import Note from '@/types/Note'
 import NoteClass from '@/types/NoteClass'
@@ -19,12 +20,14 @@ interface PitchLadderProps {
   startPoint: Position
   endPoint: Position
   width: number
+  mouseSnap: number
 }
 
 const PitchLadder: React.FC<PitchLadderProps> = ({
   startPoint,
   endPoint,
   width,
+  mouseSnap,
 }) => {
   const {
     audioManager,
@@ -50,10 +53,7 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
     () => { setSnapToJI(false); audioManager?.stopAll() },
   )
 
-  const octaves = Array.from(
-    { length: Math.ceil(endPitch) - Math.floor(startPitch) + 1 },
-    (_, i) => i + Math.floor(startPitch),
-  )
+  const octaves = getOctavesInRange(startPitch, endPitch)
   const JITones = getOvertones(JIConstraint, [startPitch, endPitch]).map(overtone => ({
     ...overtone,
     note: new Note({ baseFrequency, type: 'pitch', value: overtone.pitch }),
@@ -77,7 +77,7 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
   const TETPitches = expandToAllPitches(TETTones)
 
   return <PitchLadderContext.Provider
-    value={{ startPoint, endPoint, width }}
+    value={{ startPoint, endPoint, width, mouseSnap }}
   >
     <g>
       <LadderNoteIndicator />

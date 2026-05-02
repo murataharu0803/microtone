@@ -6,11 +6,13 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 import Note from '@/types/Note'
 import { getAngle, getPositionOnLineSegment, getVerticalEndpoints, mapRange } from '@/utils/math'
 
-const PitchLadderLineLine: React.FC<{
+type PitchLadderLineLineProps = {
   note: Note
   color: string
   shrink?: number
-}> = ({ note, color, shrink = 0 }) => {
+}
+
+const PitchLadderLineLine: React.FC<PitchLadderLineLineProps> = ({ note, color, shrink = 0 }) => {
   const { startPitch, endPitch } = useContext(PitchVisualizeSystemContext)
   const { startPoint, endPoint, width } = React.useContext(PitchLadderContext)
 

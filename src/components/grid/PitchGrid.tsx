@@ -3,36 +3,38 @@ import React, { useState } from 'react'
 import PitchGridDot from '@/components/grid/PitchGridDot'
 
 import PitchGridContext from '@/context/PitchGridContext'
-
 import { useKey } from '@/hooks/useKey'
 
+import { defaultDimensionRanges } from '@/utils/dimension'
 import { moveInLimit } from '@/utils/math'
 
-import Axis, { defaultAxis } from '@/types/Axis'
+import { Dimension, DimensionRange } from '@/types/Dimension'
 import Position from '@/types/Position'
+
 
 type PitchGridProps = {
   center: Position
   spacing: Position
-  axis?: Axis[]
+  dimensionRanges?: Record<Dimension, DimensionRange>
   triggerKeys?: string[][]
 }
 
 const PitchGrid: React.FC<PitchGridProps> = ({
   center,
   spacing,
-  axis = defaultAxis,
+  dimensionRanges = defaultDimensionRanges,
   triggerKeys = [],
 }) => {
   const [d, setD] = useState<number | null>(null)
-  const [dn, setDn] = useState<number>(0)
+  const [dnShift, setDnShift] = useState<number>(0)
 
-  const [d1, setD1] = useState<number>(0)
-  const [d2, setD2] = useState<number>(0)
-  const [d3, setD3] = useState<number>(0)
+  const [d1Shift, setD1Shift] = useState<number>(0)
+  const [d2Shift, setD2Shift] = useState<number>(0)
+  const [d3Shift, setD3Shift] = useState<number>(0)
 
-  const xAxis = axis[1]
-  const yAxis = axis[2]
+  const oAxis = dimensionRanges[Dimension.D1]
+  const xAxis = dimensionRanges[Dimension.D2]
+  const yAxis = dimensionRanges[Dimension.D3]
 
   const xs = Array.from(
     { length: xAxis.display.end - xAxis.display.start + 1 },
@@ -50,30 +52,35 @@ const PitchGrid: React.FC<PitchGridProps> = ({
     triggerKey: triggerKeys[yi]?.[xi],
   })))
 
-  useKey('PageUp', () => setD1(moveInLimit(d1, 1, [axis[0].shift.start, axis[0].shift.end])))
-  useKey('PageDown', () => setD1(moveInLimit(d1, -1, [axis[0].shift.start, axis[0].shift.end])))
-  useKey('ArrowUp', () => setD2(moveInLimit(d2, 1, [axis[1].shift.start, axis[1].shift.end])))
-  useKey('ArrowDown', () => setD2(moveInLimit(d2, -1, [axis[1].shift.start, axis[1].shift.end])))
-  useKey('ArrowRight', () => setD3(moveInLimit(d3, 1, [axis[2].shift.start, axis[2].shift.end])))
-  useKey('ArrowLeft', () => setD3(moveInLimit(d3, -1, [axis[2].shift.start, axis[2].shift.end])))
-  useKey('9', () => { setD(4); setDn(-1) }, () => { setD(null); setDn(0) })
-  useKey('-', () => { setD(5); setDn(-1) }, () => { setD(null); setDn(0) })
-  useKey('[', () => { setD(6); setDn(-1) }, () => { setD(null); setDn(0) })
-  useKey('0', () => { setD(4); setDn(1) }, () => { setD(null); setDn(0) })
-  useKey('=', () => { setD(5); setDn(1) }, () => { setD(null); setDn(0) })
-  useKey(']', () => { setD(6); setDn(1) }, () => { setD(null); setDn(0) })
+  /* eslint-disable @stylistic/max-len */
+  useKey('PageUp', () => setD1Shift(moveInLimit(d1Shift, 1, [oAxis.shift.start, oAxis.shift.end])))
+  useKey('PageDown', () => setD1Shift(moveInLimit(d1Shift, -1, [oAxis.shift.start, oAxis.shift.end])))
+  useKey('ArrowUp', () => setD2Shift(moveInLimit(d2Shift, 1, [xAxis.shift.start, xAxis.shift.end])))
+  useKey('ArrowDown', () => setD2Shift(moveInLimit(d2Shift, -1, [xAxis.shift.start, xAxis.shift.end])))
+  useKey('ArrowRight', () => setD3Shift(moveInLimit(d3Shift, 1, [yAxis.shift.start, yAxis.shift.end])))
+  useKey('ArrowLeft', () => setD3Shift(moveInLimit(d3Shift, -1, [yAxis.shift.start, yAxis.shift.end])))
+  useKey('9', () => { setD(4); setDnShift(-1) }, () => { setD(null); setDnShift(0) })
+  useKey('-', () => { setD(5); setDnShift(-1) }, () => { setD(null); setDnShift(0) })
+  useKey('[', () => { setD(6); setDnShift(-1) }, () => { setD(null); setDnShift(0) })
+  useKey('0', () => { setD(4); setDnShift(1) }, () => { setD(null); setDnShift(0) })
+  useKey('=', () => { setD(5); setDnShift(1) }, () => { setD(null); setDnShift(0) })
+  useKey(']', () => { setD(6); setDnShift(1) }, () => { setD(null); setDnShift(0) })
+  /* eslint-enable @stylistic/max-len */
 
-  return <PitchGridContext.Provider value={{ center, spacing, axis }}>
+  return <PitchGridContext.Provider value={{ center, spacing }}>
     <g>
       {dots.map(dot =>
         <PitchGridDot
-          key={`${d1},${dot.d2 + d2},${dot.d3 + d3}${d ? `,${d}:${dn}` : ''}`}
+          key={`${d1Shift},${dot.d2 + d2Shift},${dot.d3 + d3Shift}${d ? `,${d}:${dnShift}` : ''}`}
           position={{ x: dot.x, y: dot.y }}
-          d1={d1}
-          d2={dot.d2 + d2}
-          d3={dot.d3 + d3}
-          d={d}
-          dn={dn}
+          dimensionUnits={{
+            [Dimension.D1]: d1Shift,
+            [Dimension.D2]: dot.d2 + d2Shift,
+            [Dimension.D3]: dot.d3 + d3Shift,
+            [Dimension.D4]: d === 4 ? dnShift : 0,
+            [Dimension.D5]: d === 5 ? dnShift : 0,
+            [Dimension.D6]: d === 6 ? dnShift : 0,
+          }}
           triggerKey={dot.triggerKey}
         />,
       )}

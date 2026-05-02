@@ -6,12 +6,14 @@ interface PitchLadderContextProps {
   startPoint: Position
   endPoint: Position
   width: number
+  mouseSnap: number
 }
 
 const PitchLadderContext = createContext<PitchLadderContextProps>({
   startPoint: { x: 500, y: 100 },
   endPoint: { x: 500, y: 900 },
   width: 150,
+  mouseSnap: 10,
 })
 
 export default PitchLadderContext

@@ -6,6 +6,7 @@ import PitchLine from '@/components/circle/PitchLine'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { findFurthest } from '@/utils/math'
+import { getOctavesInRange } from '@/utils/pitch'
 
 import Note from '@/types/Note'
 import NoteClass from '@/types/NoteClass'
@@ -27,10 +28,7 @@ const TETPitchGroup: React.FC<TETPitchGroupProps> = ({
     endPitch,
   } = useContext(PitchVisualizeSystemContext)
 
-  const octaves = Array.from(
-    { length: Math.ceil(endPitch) - Math.floor(startPitch) + 1 },
-    (_, i) => i + Math.floor(startPitch),
-  )
+  const octaves = getOctavesInRange(startPitch, endPitch)
   const tones = Array.from({ length: TET }, (_, step) => ({
     noteClass: new NoteClass({ type: 'pitch', value: step / TET }),
     step,

@@ -47,11 +47,13 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       center={{ x: 640, y: 500 }}
       startRadius={250}
       radiusStep={50}
+      mouseSnap={10}
     />
     <PitchLadder
       startPoint={{ x: 1200, y: 900 }}
       endPoint={{ x: 1200, y: 100 }}
       width={150}
+      mouseSnap={40}
     />
     <PitchGrid
       center={{ x: 800, y: 1280 }}

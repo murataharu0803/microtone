@@ -5,7 +5,7 @@ import PitchLine from '@/components/circle/PitchLine'
 
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
-import { getOvertones } from '@/utils/overtones'
+import { getOvertones } from '@/utils/dimension'
 
 import Note from '@/types/Note'
 
@@ -35,9 +35,6 @@ const JIPitchGroup: React.FC<JIPitchGroupProps> = ({
   }))
 
   return <g>
-    {allTones.map(tone => {
-      return <PitchLine key={`JI-${tone.noteSymbol}`} note={tone.note} color={tone.color} />
-    })}
     {isPlayable && allTones.reverse().map(tone =>
       <g key={tone.noteSymbol}>
         {isPlayable && <PitchLine note={tone.note} color={tone.color} />}

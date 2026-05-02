@@ -12,14 +12,13 @@ import { getDistanceToLine, getRatioOnLineSegment, mapRange } from '@/utils/math
 
 import Note from '@/types/Note'
 
-const MOUSE_SNAP = 10
-
 const PitchLadderMouse: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
   const {
     startPoint,
     endPoint,
     width,
+    mouseSnap,
   } = useContext(PitchLadderContext)
   const {
     baseFrequency,
@@ -46,7 +45,7 @@ const PitchLadderMouse: React.FC = () => {
     if (!mousePosition) return null
 
     const dist = getDistanceToLine(mousePosition, [startPoint, endPoint])
-    if (dist > width / 2 + MOUSE_SNAP) return null
+    if (dist > width / 2 + mouseSnap) return null
 
     const ratio = getRatioOnLineSegment(mousePosition, [startPoint, endPoint])
     if (ratio < 0 || ratio > 1) return null

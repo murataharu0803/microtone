@@ -10,11 +10,10 @@ import SVGContext from '@/context/SVGContext'
 import { useMouse } from '@/hooks/useMouse'
 
 import { distance } from '@/utils/math'
+import { getOctavesInRange } from '@/utils/pitch'
 
 import Note from '@/types/Note'
 import { R_360, R_90 } from '@/types/constants'
-
-const MOUSE_SNAP = 40
 
 const PitchCircleMouse: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
@@ -22,6 +21,7 @@ const PitchCircleMouse: React.FC = () => {
     center,
     startRadius,
     radiusStep,
+    mouseSnap,
   } = useContext(PitchCircleContext)
   const {
     audioManager,
@@ -31,26 +31,18 @@ const PitchCircleMouse: React.FC = () => {
   } = useContext(PitchVisualizeSystemContext)
 
   const noteToken = useRef<string | null>(null)
+  const octaves = getOctavesInRange(startPitch, endPitch)
 
-  const startOctave = Math.floor(startPitch)
-  const endOctave = Math.ceil(endPitch)
-  const octaves = Array.from(
-    { length: endOctave - startOctave + 1 },
-    (_, i) => i + startOctave,
-  )
-
-  const getTone = () => {
+  const getToneFromMousePosition = () => {
     if (!mousePosition) return null
 
     const distanceToCenter = distance(mousePosition, center)
     const mouseAngle =
       Math.atan2(mousePosition.y - center.y, mousePosition.x - center.x)
     const mouseNormalizedPitch = ((mouseAngle + R_90) / R_360 + 1) % 1
-    const deltaPitch = (mouseNormalizedPitch - startPitch) % 1
-    const firstDeltaPitch = deltaPitch < 0 ? deltaPitch + 1 : deltaPitch
 
     const pitches = octaves
-      .map(octave => ({ pitch: firstDeltaPitch + startPitch + octave, octave }))
+      .map(octave => ({ pitch: mouseNormalizedPitch + startPitch + octave, octave }))
       .filter(note => note.pitch >= startPitch && note.pitch <= endPitch)
       .map(note => ({
         distance: (note.pitch - startPitch) * radiusStep + startRadius,
@@ -63,7 +55,7 @@ const PitchCircleMouse: React.FC = () => {
           ? curr : prev,
       pitches[0],
     )
-    if (Math.abs(closestPitch.distance - distanceToCenter) > MOUSE_SNAP) return null
+    if (Math.abs(closestPitch.distance - distanceToCenter) > mouseSnap) return null
 
     const mouseFrequency = baseFrequency * Math.pow(2, closestPitch.pitch)
     return { frequency: mouseFrequency, ...closestPitch }
@@ -71,7 +63,7 @@ const PitchCircleMouse: React.FC = () => {
 
   const playMouseTone = (pressed = true) => {
     if (!pressed) return
-    const frequency = getTone()?.frequency
+    const frequency = getToneFromMousePosition()?.frequency
     if (frequency) {
       if (noteToken.current)
         noteToken.current = audioManager?.play(frequency, noteToken.current) || null
@@ -89,7 +81,7 @@ const PitchCircleMouse: React.FC = () => {
     if (noteToken.current) noteToken.current = audioManager?.stop(noteToken.current) || null
   }, [audioManager])
 
-  const tone = getTone()
+  const tone = getToneFromMousePosition()
   if (!tone) return null
 
   const note = new Note({
