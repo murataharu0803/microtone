@@ -62,13 +62,11 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
       <NoteIndicator />
       <JIPitchGroup
         isPlayable={isSnapped && snapToJI}
-        // triggerKeys={[]} // for now keys are used for JI grid
       />
       {!isSnapped && <PitchCircleMouse />}
       <TETPitchGroup
         isPlayable={isSnapped && !snapToJI}
         TET={12}
-        // triggerKeys={[]} // for now keys are used for JI grid
       />
       <CenterDisplay />
     </g>

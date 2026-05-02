@@ -10,8 +10,6 @@ export const useMouse = (
   onUp: () => void = () => void 0,
   onMove: (isPressed: boolean) => void = () => void 0,
 ) => {
-  const setMouseDown = useCallback(onDown, [onDown])
-  const setMouseUp = useCallback(onUp, [onUp])
   const setMouseMove = useCallback((e: Event) => {
     const event = e as MouseEvent
     onMove(event.buttons > 0)
@@ -23,15 +21,15 @@ export const useMouse = (
 
   useEffect(() => {
     const refCurrent = ref?.current
-    refCurrent?.addEventListener('mousedown', setMouseDown)
-    refCurrent?.addEventListener('mouseup', setMouseUp)
+    refCurrent?.addEventListener('mousedown', onDown)
+    refCurrent?.addEventListener('mouseup', onUp)
     refCurrent?.addEventListener('mouseleave', setMouseLeave)
     refCurrent?.addEventListener('mousemove', setMouseMove)
     return () => {
-      refCurrent?.removeEventListener('mousedown', setMouseDown)
-      refCurrent?.removeEventListener('mouseup', setMouseUp)
+      refCurrent?.removeEventListener('mousedown', onDown)
+      refCurrent?.removeEventListener('mouseup', onUp)
       refCurrent?.removeEventListener('mouseleave', setMouseLeave)
       refCurrent?.removeEventListener('mousemove', setMouseMove)
     }
-  }, [setMouseDown, setMouseUp, setMouseMove, ref, setMouseLeave])
+  }, [onDown, onUp, setMouseMove, ref, setMouseLeave])
 }

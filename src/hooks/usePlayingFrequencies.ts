@@ -19,6 +19,5 @@ export const usePlayingFrequencies = () => {
 
   return {
     frequencies,
-    setFrequencies,
   }
 }

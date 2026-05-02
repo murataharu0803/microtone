@@ -1,5 +1,5 @@
 export const R_360 = 2 * Math.PI // 360 degrees in radians
-export const R_180 = Math.PI // 360 degrees in radians
+export const R_180 = Math.PI // 180 degrees in radians
 export const R_90 = Math.PI / 2 // 90 degrees in radians
 
 export const RIGHT = 0
