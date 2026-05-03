@@ -1,6 +1,7 @@
-import { Dimension, DimensionRange } from '@/types/Dimension'
+import { Dimension } from '@/types/Dimension'
 import JIConstraint from '@/types/JIConstraint'
 import NoteClass from '@/types/NoteClass'
+import Range from '@/types/Range'
 
 export const ALL_DIMENSIONS = Object.values(Dimension) as Dimension[]
 
@@ -47,31 +48,13 @@ export const DIMENSION_SYMBOLS = {
   [Dimension.D6]: 'K',
 } as Record<Dimension, string>
 
-export const defaultDimensionRanges: Record<Dimension, DimensionRange> = {
-  [Dimension.D1]: {
-    shift: { start: -1, end: 3 },
-    display: { start: 1, end: 1 },
-  },
-  [Dimension.D2]: {
-    shift: { start: -2, end: 2 },
-    display: { start: -3, end: 3 },
-  },
-  [Dimension.D3]: {
-    shift: { start: -2, end: 2 },
-    display: { start: -2, end: 2 },
-  },
-  [Dimension.D4]: {
-    shift: { start: -1, end: 1 },
-    display: { start: 0, end: 0 },
-  },
-  [Dimension.D5]: {
-    shift: { start: -1, end: 1 },
-    display: { start: 0, end: 0 },
-  },
-  [Dimension.D6]: {
-    shift: { start: -1, end: 1 },
-    display: { start: 0, end: 0 },
-  },
+export const defaultDimensionRanges: Record<Dimension, Range> = {
+  [Dimension.D1]: { start: -3, end: 3 },
+  [Dimension.D2]: { start: -3, end: 3 },
+  [Dimension.D3]: { start: -2, end: 2 },
+  [Dimension.D4]: { start: -1, end: 1 },
+  [Dimension.D5]: { start: -1, end: 1 },
+  [Dimension.D6]: { start: -1, end: 1 },
 }
 
 export const getOvertones = (constraint: JIConstraint, octaveRange: [number, number]) => {

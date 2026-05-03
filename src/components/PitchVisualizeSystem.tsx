@@ -57,7 +57,11 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
     />
     <PitchGrid
       center={{ x: 800, y: 1280 }}
-      spacing={{ x: 120, y: -120 }}
+      spacing={[
+        { x: 120, y: 0, z: 0 },
+        { x: 0, y: -120, z: 0 },
+        { x: 140, y: 140, z: 0.25 },
+      ]}
       triggerKeys={[
         [],
         ['x', 'c', 'v', 'b', 'n', 'm', ','],

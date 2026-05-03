@@ -1,5 +1,6 @@
 import { R_90 } from '@/types/constants'
 import Position from '@/types/Position'
+import Range from '@/types/Range'
 
 export const findClosest = <T>(
   arr: T[],
@@ -133,9 +134,9 @@ export const getVerticalEndpoints = (
 export const moveInLimit = (
   value: number,
   delta: number,
-  limit: [number, number],
+  limit: Range,
 ): number => {
-  const [min, max] = limit
+  const { start: min, end: max } = limit
   const newValue = value + delta
   return Math.max(min, Math.min(max, newValue))
 }

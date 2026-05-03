@@ -1,5 +1,3 @@
-import Range from '@/types/Range'
-
 export enum Dimension {
   D1 = 'D1',
   D2 = 'D2',
@@ -16,8 +14,8 @@ export const D4 = Dimension.D4
 export const D5 = Dimension.D5
 export const D6 = Dimension.D6
 
-export interface DimensionRange {
-  /* max and min shift for the dimension */
-  shift: Range
-  display: Range
+export interface AxisUnitSpacing {
+  x: number
+  y: number
+  z: number
 }

@@ -8,14 +8,19 @@ import { useKey } from '@/hooks/useKey'
 import { defaultDimensionRanges } from '@/utils/dimension'
 import { moveInLimit } from '@/utils/math'
 
-import { D1, D2, D3, D4, D5, D6, Dimension, DimensionRange } from '@/types/Dimension'
+import {
+  AxisUnitSpacing,
+  D1, D2, D3, D4, D5, D6,
+  Dimension,
+} from '@/types/Dimension'
 import Position from '@/types/Position'
+import Range from '@/types/Range'
 
 
 type PitchGridProps = {
   center: Position
-  spacing: Position
-  dimensionRanges?: Record<Dimension, DimensionRange>
+  spacing: AxisUnitSpacing[]
+  dimensionRanges?: Record<Dimension, Range>
   triggerKeys?: string[][]
 }
 
@@ -25,101 +30,74 @@ const PitchGrid: React.FC<PitchGridProps> = ({
   dimensionRanges = defaultDimensionRanges,
   triggerKeys = [],
 }) => {
-  const [dimensionShifts, setDimensionShifts] =  useState({
-    [D1]: 0,
-    [D2]: 0,
-    [D3]: 0,
-    activeLargeDimension: null as Dimension | null,
-    activeLargeDimensionShift: 0,
-  })
+  const oAxis = D1
+  const xAxis = D2
+  const yAxis = D3
+  const [zAxis, setZAxis] = useState(D4)
 
-  const shiftSmallDimension = (dimension: typeof D1 | typeof D2 | typeof D3, delta: number) => {
-    const range = [
-      dimensionRanges[dimension].shift.start,
-      dimensionRanges[dimension].shift.end,
-    ] as [number, number]
+  const oRange = dimensionRanges[oAxis]
+  const xRange = dimensionRanges[xAxis]
+  const yRange = dimensionRanges[yAxis]
+  const zRange = dimensionRanges[zAxis]
 
-    setDimensionShifts(prev => ({
-      ...prev,
-      [dimension]: moveInLimit(prev[dimension], delta, range),
-    }))
-  }
+  const [oShift, setOShift] = useState(0)
 
-  const shiftLargeDimension = (dimension: Dimension, target: number) => {
-    if (target === 0) {
-      setDimensionShifts(prev => ({
-        ...prev,
-        activeLargeDimension: null,
-        activeLargeDimensionShift: 0,
-      }))
-    } else {
-      const range = [
-        dimensionRanges[dimension].shift.start,
-        dimensionRanges[dimension].shift.end,
-      ] as [number, number]
+  const xs: number[] = Array.from(
+    { length: xRange.end - xRange.start + 1 },
+    (_, i) => i + xRange.start,
+  )
+  const ys: number[] = Array.from(
+    { length: yRange.end - yRange.start + 1 },
+    (_, i) => i + yRange.start,
+  )
+  const zs: number[] = Array.from(
+    { length: zRange.end - zRange.start + 1 },
+    (_, i) => i + zRange.start,
+  )
 
-      setDimensionShifts(prev => ({
-        ...prev,
-        activeLargeDimension: dimension,
-        activeLargeDimensionShift: moveInLimit(target, 0, range),
-      }))
+
+  const dots = xs.flatMap(((x, xi) => ys.flatMap((y, yi) => zs.map(z => {
+    const scale = spacing.reduce(
+      (acc, s) => s.z > 0
+        ? acc * Math.pow(1 + s.z, z)
+        : acc / Math.pow(1 + s.z, z),
+      1,
+    )
+    const dotX = center.x + x * (spacing[0].x + spacing[1].x) + spacing[2].x * (scale - 1)
+    const dotY = center.y + y * (spacing[0].y + spacing[1].y) + spacing[2].y * (scale - 1)
+    console.log(scale)
+
+    return {
+      [D1]: oShift,
+      [D2]: x,
+      [D3]: y,
+      [D4]: zAxis === D4 ? z : 0,
+      [D5]: zAxis === D5 ? z : 0,
+      [D6]: zAxis === D6 ? z : 0,
+      x: dotX,
+      y: dotY,
+      scale,
+      triggerKey: z ? null : triggerKeys[yi]?.[xi],
     }
-  }
+  }))))
 
-  const xAxis = dimensionRanges[D2]
-  const yAxis = dimensionRanges[D3]
-
-  const xs = Array.from(
-    { length: xAxis.display.end - xAxis.display.start + 1 },
-    (_, i) => i + xAxis.display.start,
-  )
-  const ys = Array.from(
-    { length: yAxis.display.end - yAxis.display.start + 1 },
-    (_, i) => i + yAxis.display.start,
-  )
-  const dots = xs.flatMap((x, xi) => ys.map((y, yi) => ({
-    d2: x,
-    d3: y,
-    x: center.x + x * spacing.x,
-    y: center.y + y * spacing.y,
-    triggerKey: triggerKeys[yi]?.[xi],
-  })))
-
-  useKey('PageUp', () => shiftSmallDimension(D1, 1))
-  useKey('PageDown', () => shiftSmallDimension(D1, -1))
-  useKey('ArrowUp', () => shiftSmallDimension(D3, 1))
-  useKey('ArrowDown', () => shiftSmallDimension(D3, -1))
-  useKey('ArrowRight', () => shiftSmallDimension(D2, 1))
-  useKey('ArrowLeft', () => shiftSmallDimension(D2, -1))
-  useKey('9', () => shiftLargeDimension(D4, -1), () => shiftLargeDimension(D4, 0))
-  useKey('0', () => shiftLargeDimension(D4,  1), () => shiftLargeDimension(D4, 0))
-  useKey('-', () => shiftLargeDimension(D5, -1), () => shiftLargeDimension(D5, 0))
-  useKey('=', () => shiftLargeDimension(D5,  1), () => shiftLargeDimension(D5, 0))
-  useKey('[', () => shiftLargeDimension(D6, -1), () => shiftLargeDimension(D6, 0))
-  useKey(']', () => shiftLargeDimension(D6,  1), () => shiftLargeDimension(D6, 0))
-
-  const {
-    activeLargeDimension: d,
-    activeLargeDimensionShift: dnShift,
-    [D1]: d1Shift,
-    [D2]: d2Shift,
-    [D3]: d3Shift,
-  } = dimensionShifts
+  useKey('PageUp', () => setOShift(moveInLimit(oShift, 1, oRange)))
+  useKey('PageDown', () => setOShift(moveInLimit(oShift, -1, oRange)))
+  useKey('Tab', () => {
+    const zAxes = [D4, D5, D6]
+    const currentIndex = zAxes.indexOf(zAxis)
+    const nextIndex = (currentIndex + 1) % zAxes.length
+    setZAxis(zAxes[nextIndex])
+  })
 
   return <PitchGridContext.Provider value={{ center, spacing }}>
     <g>
       {dots.map(dot =>
         <PitchGridDot
-          key={`${d1Shift},${dot.d2 + d2Shift},${dot.d3 + d3Shift}${d ? `,${d}:${dnShift}` : ''}`}
+          key={`${dot[D1]},${dot[D2]},${dot[D3]},${dot[D4]},${dot[D5]},${dot[D6]}`}
           position={{ x: dot.x, y: dot.y }}
-          dimensionUnits={{
-            [D1]: d1Shift,
-            [D2]: dot.d2 + d2Shift,
-            [D3]: dot.d3 + d3Shift,
-            [D4]: d === D4 ? dnShift : 0,
-            [D5]: d === D5 ? dnShift : 0,
-            [D6]: d === D6 ? dnShift : 0,
-          }}
+          scale={dot.scale}
+          dimensionUnits={dot}
           triggerKey={dot.triggerKey}
         />,
       )}
