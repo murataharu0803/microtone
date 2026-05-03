@@ -39,7 +39,7 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
   >
     <PitchCircle
       center={{ x: 640, y: 500 }}
-      startRadius={250}
+      startRadius={200}
       radiusStep={50}
       mouseSnap={10}
     />
