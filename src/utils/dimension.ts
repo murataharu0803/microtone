@@ -1,6 +1,4 @@
 import { Dimension } from '@/types/Dimension'
-import JIConstraint from '@/types/JIConstraint'
-import NoteClass from '@/types/NoteClass'
 import Range from '@/types/Range'
 
 export const ALL_DIMENSIONS = Object.values(Dimension) as Dimension[]
@@ -55,82 +53,4 @@ export const defaultDimensionRanges: Record<Dimension, Range> = {
   [Dimension.D4]: { start: -1, end: 1 },
   [Dimension.D5]: { start: -1, end: 1 },
   [Dimension.D6]: { start: -1, end: 1 },
-}
-
-export const getOvertones = (constraint: JIConstraint, octaveRange: [number, number]) => {
-  const { maxDimension, maxComplexity } = constraint
-  const allDimensions = ALL_DIMENSIONS.slice(0, maxDimension)
-
-  const lowestOctave = octaveRange[0]
-  const highestOctave = octaveRange[1]
-
-  const dimensionRanges = allDimensions.reduce((ranges, dimension) => {
-    if (dimension === Dimension.D1) {
-      ranges[dimension] = [lowestOctave, highestOctave]
-      return ranges
-    }
-    const complexity = DIMENSION_COMPLEXITY[dimension]
-    const maxRange = Math.floor(maxComplexity / complexity)
-    ranges[dimension] = [-maxRange, maxRange]
-    return ranges
-  }, {} as Record<Dimension, [number, number]>)
-
-  const allDimensionCombinations = allDimensions.reduce((combinations, dimension) => {
-    const [min, max] = dimensionRanges[dimension]
-    const arr = Array.from({ length: max - min + 1 }, (_, i) => i + min)
-    const newCombinations = arr.flatMap(v => combinations.map(c => ({ ...c, [dimension]: v })))
-    return newCombinations
-  }, [{}] as Record<Dimension, number>[])
-
-  const filteredCombinations = allDimensionCombinations.filter(c => {
-    const factor = Object.entries(c).reduce((acc, [dimension, value]) => {
-      const dim = dimension as Dimension
-      return acc + Math.log2(DIMENSION_FACTOR[dim]) * value
-    }, 0)
-    const complexity = Object.entries(c).reduce((acc, [dimension, value]) => {
-      const dim = dimension as Dimension
-      return acc + Math.abs(value) * DIMENSION_COMPLEXITY[dim]
-    }, 0)
-    return factor <= octaveRange[1] && factor >= octaveRange[0] && complexity <= maxComplexity
-  })
-
-  const overTones = filteredCombinations.map(c => {
-    let noteSymbol = '.'
-    allDimensions.forEach(dimension => {
-      const value = c[dimension]
-      if (value > 0)
-        noteSymbol += DIMENSION_SYMBOLS[dimension].repeat(value)
-      else if (value < 0)
-        noteSymbol = DIMENSION_SYMBOLS[dimension].repeat(-value) + noteSymbol
-    })
-
-    const pitch = Object.entries(c).reduce((acc, [dimension, value]) => {
-      const dim = dimension as Dimension
-      return acc + Math.log2(DIMENSION_FACTOR[dim]) * value
-    }, 0)
-    const noteClass = new NoteClass({ type: 'pitch', value: pitch })
-
-    const complexity = Object.entries(c).reduce((acc, [dimension, value]) => {
-      const dim = dimension as Dimension
-      return acc + Math.abs(value) * DIMENSION_COMPLEXITY[dim]
-    }, 0)
-
-    const color = allDimensions.reduce((acc, dimension) => {
-      const value = c[dimension]
-      if (value)
-        return DIMENSION_COLORS[dimension]
-      return acc
-    }, '#888888')
-
-    return {
-      noteSymbol,
-      noteClass,
-      pitch,
-      complexity,
-      color,
-    }
-  })
-
-  const sortedOvertones = overTones.sort((a, b) => a.pitch - b.pitch)
-  return sortedOvertones
 }

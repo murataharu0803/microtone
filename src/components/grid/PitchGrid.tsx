@@ -65,7 +65,6 @@ const PitchGrid: React.FC<PitchGridProps> = ({
     )
     const dotX = center.x + x * (spacing[0].x + spacing[1].x) + spacing[2].x * (scale - 1)
     const dotY = center.y + y * (spacing[0].y + spacing[1].y) + spacing[2].y * (scale - 1)
-    console.log(scale)
 
     return {
       [D1]: oShift,

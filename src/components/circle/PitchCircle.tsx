@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 import CenterDisplay from '@/components/circle/CenterDisplay'
-import JIPitchGroup from '@/components/circle/JIPitchGroup'
 import NoteIndicator from '@/components/circle/NoteIndicator'
 import PitchCircleMouse from '@/components/circle/PitchCircleMouse'
 import TETPitchGroup from '@/components/circle/TETPitchGroup'
@@ -32,18 +31,11 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
   const { audioManager, startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
 
   const [isSnapped, setIsSnapped] = useState(true)
-  const [snapToJI, setSnapToJI] = useState(false)
 
   useKey(
     'Shift',
     () => { setIsSnapped(false); audioManager?.stopAll() },
     () => { setIsSnapped(true); audioManager?.stopAll() },
-  )
-
-  useKey(
-    'Control',
-    () => { setSnapToJI(true); audioManager?.stopAll() },
-    () => { setSnapToJI(false); audioManager?.stopAll() },
   )
 
   const startTheta = startPitch * R_360 - R_90
@@ -60,12 +52,9 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
     <g>
       <path d={spiral(center, startRadius, radiusStep, startTheta, endTheta, 0.1)} stroke="#888"/>
       <NoteIndicator />
-      <JIPitchGroup
-        isPlayable={isSnapped && snapToJI}
-      />
       {!isSnapped && <PitchCircleMouse />}
       <TETPitchGroup
-        isPlayable={isSnapped && !snapToJI}
+        isPlayable={isSnapped}
         TET={12}
       />
       <CenterDisplay />

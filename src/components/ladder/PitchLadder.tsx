@@ -9,7 +9,6 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 
-import { getOvertones } from '@/utils/dimension'
 import { getOctavesInRange } from '@/utils/pitch'
 
 import Note from '@/types/Note'
@@ -34,12 +33,10 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
     baseFrequency,
     startPitch,
     endPitch,
-    JIConstraint,
   } = React.useContext(PitchVisualizeSystemContext)
   const TET = 12
 
   const [isSnapped, setIsSnapped] = useState(true)
-  const [snapToJI, setSnapToJI] = useState(false)
 
   useKey(
     'Shift',
@@ -47,18 +44,7 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
     () => { setIsSnapped(true); audioManager?.stopAll() },
   )
 
-  useKey(
-    'Control',
-    () => { setSnapToJI(true); audioManager?.stopAll() },
-    () => { setSnapToJI(false); audioManager?.stopAll() },
-  )
-
   const octaves = getOctavesInRange(startPitch, endPitch)
-  const JITones = getOvertones(JIConstraint, [startPitch, endPitch]).map(overtone => ({
-    ...overtone,
-    note: new Note({ baseFrequency, type: 'pitch', value: overtone.pitch }),
-    shrink: 0.05 * overtone.complexity,
-  }))
   const TETTones = Array.from({ length: TET  }, (_, step) => ({
     noteClass: new NoteClass({ type: 'pitch', value: step / TET }),
     color: step ? '#888888' : 'white',
@@ -82,12 +68,8 @@ const PitchLadder: React.FC<PitchLadderProps> = ({
     <g>
       <LadderNoteIndicator />
       <PitchLadderSet
-        isPlayable={isSnapped && !snapToJI}
+        isPlayable={isSnapped}
         pitches={TETPitches}
-      />
-      <PitchLadderSet
-        isPlayable={isSnapped && snapToJI}
-        pitches={JITones}
       />
       {!isSnapped && <PitchLadderMouse />}
     </g>
