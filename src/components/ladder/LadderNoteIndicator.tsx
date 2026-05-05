@@ -9,8 +9,8 @@ import { usePlayingFrequencies } from '@/hooks/usePlayingFrequencies'
 
 import { getAngle, getPointByRadiusAndAngle } from '@/utils/math'
 
-import { R_180 } from '@/types/constants'
 import Note from '@/types/Note'
+import { R_180 } from '@/utils/math'
 
 const LadderNoteIndicator: React.FC = () => {
   const {

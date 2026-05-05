@@ -1,7 +1,7 @@
 // https://stackoverflow.com/questions/49091970/how-to-make-a-spiral-in-svg/49099258#49099258
 
-import { R_360 } from '@/types/constants'
 import Position from '@/types/Position'
+import { R_360 } from '@/utils/math'
 
 const lineIntersection = (m1: number, b1: number, m2: number, b2: number) => {
   if (m1 === m2) throw new Error('parallel slopes')

@@ -9,6 +9,7 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 import { useKey } from '@/hooks/useKey'
 
 import AudioManager from '@/types/AudioManager'
+import ChordManager from '@/types/ChordManager'
 
 interface PitchVisualizeSystemProps {
   baseFrequency: number
@@ -22,11 +23,30 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
   endPitch,
 }) => {
   const audioManager = React.useRef<AudioManager>(new AudioManager())
+  const chordManager = React.useRef<ChordManager>(new ChordManager())
 
   useKey(
     '/',
-    () => { audioManager.current.togglePedalOn() },
-    () => { audioManager.current.togglePedalOff() },
+    () => {
+      audioManager.current.togglePedalOn()
+      chordManager.current.togglePedalOn()
+    },
+    () => {
+      audioManager.current.togglePedalOff()
+      chordManager.current.togglePedalOff()
+    },
+  )
+
+  useKey(
+    'Shift',
+    () => {
+      audioManager.current.stopAll()
+      chordManager.current.stopAll()
+    },
+    () => {
+      audioManager.current.stopAll()
+      chordManager.current.stopAll()
+    },
   )
 
   return <PitchVisualizeSystemContext.Provider
@@ -35,12 +55,13 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       startPitch,
       endPitch,
       audioManager: audioManager.current,
+      chordManager: chordManager.current,
     }}
   >
     <PitchCircle
       center={{ x: 640, y: 500 }}
       startRadius={200}
-      radiusStep={50}
+      radiusStep={40}
       mouseSnap={10}
     />
     <PitchLadder

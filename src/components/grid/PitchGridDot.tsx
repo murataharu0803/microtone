@@ -10,8 +10,9 @@ import { getPointByRadiusAndAngle } from '@/utils/math'
 import { getHalfSectorPath, getRingPath } from '@/utils/sector'
 
 import { D1, D2, D3, Dimension } from '@/types/Dimension'
+import JINote from '@/types/JINote'
 import Position from '@/types/Position'
-import { DOWN, R_180, R_90, UP } from '@/types/constants'
+import { DOWN, R_180, R_90, UP } from '@/utils/math'
 
 const ZERO_COLOR = '#444444'
 const GAP = 3
@@ -111,7 +112,8 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
   const inRange = pitch >= startPitch && pitch <= endPitch
 
   const buttonRef = useRef<SVGGElement>(null)
-  const { active } = useNote(frequency, buttonRef, triggerKey)
+  const jiNote = new JINote(dimensionUnits, baseFrequency)
+  const { active } = useNote(frequency, buttonRef, triggerKey, jiNote)
 
   const d1 = dimensionUnits[D1] || 0
   const d2 = dimensionUnits[D2] || 0

@@ -61,19 +61,31 @@ export default class Note {
     return this.class.pitchClass
   }
 
-  get factorClass(): number {
-    return this.class.factorClass
-  }
-
   get angle(): number {
     return this.class.angle
   }
 
   public quantizeToET(ET: number | 'standard' | 'oct'): {
-    noteClass: NoteClass
+    note: Note
+    step: number
     stepClass: number
     error: number
   } {
-    return this.class.quantizeToET(ET)
+    const stepPerOctave = typeof ET === 'number' ? ET : ET === 'oct' ? 1 : 12
+
+    const step = this.pitch * stepPerOctave
+    const closestStep = Math.round(step)
+    const error = step - closestStep
+
+    const stepClass = this.pitchClass * stepPerOctave
+    const closestStepClass = Math.round(stepClass)
+
+    const note = new Note({
+      baseFrequency: this.baseFrequency,
+      type: 'pitch',
+      value: closestStep / stepPerOctave,
+    })
+
+    return { note, step: closestStep, stepClass: closestStepClass, error }
   }
 }

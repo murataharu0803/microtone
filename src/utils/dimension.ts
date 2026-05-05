@@ -54,3 +54,12 @@ export const defaultDimensionRanges: Record<Dimension, Range> = {
   [Dimension.D5]: { start: -1, end: 1 },
   [Dimension.D6]: { start: -1, end: 1 },
 }
+
+export const DIMENSION_HARMONONYMS = {
+  [Dimension.D1]: { up: [], down: [] },
+  [Dimension.D2]: { up: ['chy', 'scy', 'xcy'], down: ['fu', 'schu', 'ju'] },
+  [Dimension.D3]: { up: ['ly', 'dry'], down: ['su', 'sru'] },
+  [Dimension.D4]: { up: ['my', 'mry'], down: ['pu', 'pru'] },
+  [Dimension.D5]: { up: ['xy', 'xry'], down: ['tschu', 'kru'] },
+  [Dimension.D6]: { up: ['zy', 'zry'], down: ['gu', 'gru'] },
+}

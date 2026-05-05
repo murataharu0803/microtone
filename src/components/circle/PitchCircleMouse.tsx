@@ -13,7 +13,7 @@ import { distance } from '@/utils/math'
 import { getOctavesInRange } from '@/utils/pitch'
 
 import Note from '@/types/Note'
-import { R_360, R_90 } from '@/types/constants'
+import { R_360, R_90 } from '@/utils/math'
 
 const PitchCircleMouse: React.FC = () => {
   const { mousePosition, SVGRef } = useContext(SVGContext)
@@ -42,7 +42,7 @@ const PitchCircleMouse: React.FC = () => {
     const mouseNormalizedPitch = ((mouseAngle + R_90) / R_360 + 1) % 1
 
     const pitches = octaves
-      .map(octave => ({ pitch: mouseNormalizedPitch + startPitch + octave, octave }))
+      .map(octave => ({ pitch: mouseNormalizedPitch + octave, octave }))
       .filter(note => note.pitch >= startPitch && note.pitch <= endPitch)
       .map(note => ({
         distance: (note.pitch - startPitch) * radiusStep + startRadius,

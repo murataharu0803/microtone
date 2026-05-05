@@ -1,5 +1,5 @@
 
-import { R_360, R_90 } from '@/types/constants'
+import { R_360, R_90 } from '@/utils/math'
 
 type NoteClassConstructorOptions = {
   type: 'pitch' | 'factor' | 'angle'
@@ -7,9 +7,6 @@ type NoteClassConstructorOptions = {
 }
 
 export default class NoteClass {
-  /** in Hertz, the frequency of the note, equals to baseFrequency * Math.pow(2, pitch) */
-  factorClass: number
-
   /** in [0, 1), the fractional part of the pitch, equals to pitch - octave */
   pitchClass: number // pitch % 1, in [0, 1)
 
@@ -26,7 +23,6 @@ export default class NoteClass {
       pitch = pitch - Math.floor(pitch)
     }
 
-    this.factorClass = Math.pow(2, pitch)
     this.pitchClass = pitch
     this.angle = pitch * R_360 - R_90
   }

@@ -13,7 +13,7 @@ import { useKey } from '@/hooks/useKey'
 import { spiral } from '@/utils/spiral'
 
 import Position from '@/types/Position'
-import { R_360, R_90 } from '@/types/constants'
+import { R_360, R_90 } from '@/utils/math'
 
 interface PitchCircleProps {
   center: Position
@@ -28,14 +28,14 @@ const PitchCircle: React.FC<PitchCircleProps> = ({
   radiusStep,
   mouseSnap,
 }) => {
-  const { audioManager, startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
+  const { startPitch, endPitch } = React.useContext(PitchVisualizeSystemContext)
 
   const [isSnapped, setIsSnapped] = useState(true)
 
   useKey(
     'Shift',
-    () => { setIsSnapped(false); audioManager?.stopAll() },
-    () => { setIsSnapped(true); audioManager?.stopAll() },
+    () => { setIsSnapped(false) },
+    () => { setIsSnapped(true) },
   )
 
   const startTheta = startPitch * R_360 - R_90

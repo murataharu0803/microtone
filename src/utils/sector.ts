@@ -1,5 +1,5 @@
-import { R_180, R_360, R_90 } from '@/types/constants'
 import Position from '@/types/Position'
+import { R_180, R_360, R_90 } from '@/utils/math'
 
 export const getSectorPath = (
   center: Position,

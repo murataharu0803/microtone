@@ -5,9 +5,9 @@ import SVGWithContext from '@/components/SVGWithContext'
 
 const App: React.FC = () => <SVGWithContext>
   <PitchVisualizeSystem
-    baseFrequency={440 * Math.pow(2, 3 / 12)} // Middle C
+    baseFrequency={440 * Math.pow(2, -9 / 12)} // Middle C
     startPitch={-2}
-    endPitch={3}
+    endPitch={4}
   />
 </SVGWithContext>
 

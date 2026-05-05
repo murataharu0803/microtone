@@ -17,9 +17,10 @@ export const ETNotation = (
     type: 'frequency',
     value: frequency,
   })
-  const { stepClass, error } = note.quantizeToET(ET)
+  const { note: closestNote, stepClass, error } = note.quantizeToET(ET)
 
-  if (isOctave) return `${note.octave}+${note.pitchClass.toFixed(4).replace('0.', '')}`
+  if (isOctave)
+    return `${note.octave}+${note.pitchClass.toFixed(4).replace('0.', '')}`
 
   const errorString = error > ERROR_MARGIN ? `+${error.toFixed(3).replace('0.', '.')}` :
     error < -ERROR_MARGIN ? `-${Math.abs(error).toFixed(3).replace('0.', '.')}` : ''
@@ -27,12 +28,12 @@ export const ETNotation = (
   if (isStandard) {
     const noteIndex = stepClass % 12
     const noteStr = NOTES[noteIndex]
-    return `${noteStr}${note.octave + 4}${errorString}`
+    return `${noteStr}${closestNote.octave + 4}${errorString}`
   }
 
-  const pitchString = note.octave > 0
-    ? `${stepClass}${'\''.repeat(note.octave)}`
-    : `${stepClass}${','.repeat(-note.octave)}`
+  const pitchString = closestNote.octave > 0
+    ? `${stepClass}${'\''.repeat(closestNote.octave)}`
+    : `${stepClass}${','.repeat(-closestNote.octave)}`
 
   return `${pitchString}${errorString}/${stepPerOctave}ET`
 }

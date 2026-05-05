@@ -9,7 +9,7 @@ import { getAngle, getPositionOnLineSegment, getVerticalEndpoints, mapRange } fr
 
 import { useNote } from '@/hooks/useNote'
 import Note from '@/types/Note'
-import { R_90 } from '@/types/constants'
+import { R_90 } from '@/utils/math'
 
 const MOUSE_SNAP = 10
 

@@ -1,12 +1,14 @@
 import { createContext } from 'react'
 
 import AudioManager from '@/types/AudioManager'
+import ChordManager from '@/types/ChordManager'
 
 interface PitchVisualizeSystemContextProps {
   baseFrequency: number
   startPitch: number
   endPitch: number
   audioManager: AudioManager | null
+  chordManager: ChordManager | null
 }
 
 
@@ -15,6 +17,7 @@ const PitchVisualizeSystemContext = createContext<PitchVisualizeSystemContextPro
   startPitch: -2,
   endPitch: 3,
   audioManager: null,
+  chordManager: null,
 })
 
 export default PitchVisualizeSystemContext
