@@ -1,6 +1,6 @@
 import React from 'react'
 
-import PitchLadderLine from '@/components/ladder/PitchLadderLine'
+import PitchLadderLineWrapper from '@/components/ladder/PitchLadderLineWrapper'
 
 import Note from '@/types/Note'
 
@@ -18,7 +18,7 @@ const PitchLadderSet: React.FC<PitchLadderSetProps> = ({
   pitches,
 }) => <g style={{ opacity: isPlayable ? 1 : 0.2 }}>
   {pitches.map(({ note, color, shrink }) =>
-    <PitchLadderLine
+    <PitchLadderLineWrapper
       key={note.pitch}
       isPlayable={isPlayable}
       note={note}

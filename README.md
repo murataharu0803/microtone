@@ -9,7 +9,7 @@ A microtone music visualization system.
 ```
 
 ## TODO
-- [ ] harmononym display on ladder
+- [x] harmononym display on ladder
 - [ ] chord tree data structure 
 - [ ] chord diagram
 - [ ] chord editor

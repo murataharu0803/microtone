@@ -1,7 +1,8 @@
-import { Dimension } from '@/types/Dimension'
+import { D1, Dimension } from '@/types/Dimension'
 import Note from '@/types/Note'
 import {
   ALL_DIMENSIONS,
+  DIMENSION_COLORS,
   DIMENSION_FACTOR,
   DIMENSION_HARMONONYMS,
   DIMENSION_SYMBOLS,
@@ -15,6 +16,8 @@ export default class JINote extends Note {
 
   public isActive: boolean = false
   public isPedaled: boolean = false
+
+  public color: string = '#888888'
 
   static getFactorFromDimensions = (dimensions: Record<Dimension, number>) => {
     const factor = ALL_DIMENSIONS.map(dim => {
@@ -60,11 +63,18 @@ export default class JINote extends Note {
     }
   }
 
+  static getColorFromDimensions = (dimensions: Record<Dimension, number>) => {
+    const factor = ALL_DIMENSIONS
+      .reduce((acc, cur) => dimensions[cur] ? DIMENSION_COLORS[cur] : acc, DIMENSION_COLORS[D1])
+    return factor
+  }
+
   constructor(dimensions: Record<Dimension, number>, baseFrequency: number) {
     const computedFactor = JINote.getFactorFromDimensions(dimensions)
     super({ baseFrequency, value: computedFactor, type: 'factor' })
     this.letterNotation = JINote.getLetterNotationFromDimensions(dimensions)
     this.harmononym = JINote.getHarmononymFromDimensions(dimensions)
+    this.color = JINote.getColorFromDimensions(dimensions)
     Object.assign(this.dimensions, dimensions)
   }
 

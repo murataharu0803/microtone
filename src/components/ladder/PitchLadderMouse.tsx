@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react'
 
-import PitchLadderLine from '@/components/ladder/PitchLadderLine'
+import PitchLadderLineWrapper from '@/components/ladder/PitchLadderLineWrapper'
 
 import PitchLadderContext from '@/context/PitchLadderContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
@@ -76,7 +76,7 @@ const PitchLadderMouse: React.FC = () => {
     value: frequency,
   })
 
-  return <PitchLadderLine
+  return <PitchLadderLineWrapper
     key={note.pitch}
     isPlayable={false}
     note={note}

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import Arrow from '@/components/Arrow'
-import PitchLadderLineLine from '@/components/ladder/PitchLadderLineLine'
+import PitchLadderLine from '@/components/ladder/PitchLadderLine'
 
 import PitchLadderContext from '@/context/PitchLadderContext'
 import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
@@ -9,6 +9,8 @@ import { usePlayingFrequencies } from '@/hooks/usePlayingFrequencies'
 
 import { getAngle, getPointByRadiusAndAngle } from '@/utils/math'
 
+import PitchLadderLabel from '@/components/ladder/PitchLadderLabel'
+import { usePlayingJINotes } from '@/hooks/usePlayingJINotes'
 import Note from '@/types/Note'
 import { R_180 } from '@/utils/math'
 
@@ -21,10 +23,12 @@ const LadderNoteIndicator: React.FC = () => {
   const { startPoint, endPoint } = React.useContext(PitchLadderContext)
 
   const { frequencies } = usePlayingFrequencies()
+  const { jiNotes } = usePlayingJINotes()
 
   const notes = frequencies.map(frequency =>
     new Note({ baseFrequency, type: 'frequency', value: frequency }),
   )
+  const jiNotesInRange = jiNotes.filter(note => note.pitch >= startPitch && note.pitch <= endPitch)
 
   const ups = notes.filter(note => note.pitch > endPitch)
   const downs = notes.filter(note => note.pitch < startPitch)
@@ -48,10 +52,19 @@ const LadderNoteIndicator: React.FC = () => {
     )}
     {rest.map((note, index) =>
       <React.Fragment key={`${index}-${note.frequency}`}>
-        <PitchLadderLineLine
+        <PitchLadderLine
           note={note}
           color="white"
           shrink={-0.2}
+        />
+      </React.Fragment>,
+    )}
+    {jiNotesInRange.map((note, index) =>
+      <React.Fragment key={`${index}-${note.letterNotation}`}>
+        <PitchLadderLabel
+          note={note}
+          name={note.harmononym}
+          color={note.color}
         />
       </React.Fragment>,
     )}

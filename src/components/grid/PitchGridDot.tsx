@@ -128,7 +128,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
 
   const opacity = (inRange ? 1 : 0.25) * (1 - (Math.abs(Math.log(scale))) * 2)
 
-  const { x, y } = getPointByRadiusAndAngle(position, 34 * scale, d1 > 0 ? UP : DOWN)
+  const { x, y } = getPointByRadiusAndAngle(position, 30 * scale, d1 > 0 ? UP : DOWN)
 
   return <g ref={buttonRef} style={{ opacity }}>
     <circle
@@ -168,6 +168,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
       key={i}
       c={{ x, y: y + 5 * i * (d1 > 0 ? -1 : 1) }}
       angle={d1 > 0 ? UP : DOWN}
+      spreadAngle={R_90}
       length={10}
       color={DIMENSION_COLORS[D1] || '#888888'}
     />)}
