@@ -9,7 +9,7 @@ import {
 } from '@/utils/dimension'
 
 export default class JINote extends Note {
-  private dimensions: Record<Dimension, number> = {} as Record<Dimension, number>
+  public dimensions: Record<Dimension, number> = {} as Record<Dimension, number>
 
   public harmononym: string
   public letterNotation: string

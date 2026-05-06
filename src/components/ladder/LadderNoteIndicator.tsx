@@ -55,7 +55,7 @@ const LadderNoteIndicator: React.FC = () => {
         <PitchLadderLine
           note={note}
           color="white"
-          shrink={-0.2}
+          shrink={0}
         />
       </React.Fragment>,
     )}

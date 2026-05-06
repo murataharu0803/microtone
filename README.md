@@ -10,8 +10,8 @@ A microtone music visualization system.
 
 ## TODO
 - [x] harmononym display on ladder
-- [ ] chord tree data structure 
-- [ ] chord diagram
+- [x] chord tree data structure 
+- [x] chord diagram
 - [ ] chord editor
 - [ ] chordynym display
 - [ ] chord progression

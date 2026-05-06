@@ -22,12 +22,12 @@ export const useNote = (
   const play = useCallback((...[state, setState]: StateTuple) => {
     if (state) setState(audioManager?.play(frequency, state) || null)
     else setState(audioManager?.play(frequency) || null)
-    if (jiNote) chordManager?.play(jiNote)
+    if (jiNote) chordManager?.add(jiNote)
   }, [frequency, audioManager, chordManager, jiNote])
 
   const stop = useCallback((...[state, setState]: StateTuple) => {
     if (state) setState(audioManager?.stop(state) || null)
-    if (state && jiNote) chordManager?.stop(jiNote)
+    if (state && jiNote) chordManager?.remove(jiNote)
   }, [audioManager, chordManager, jiNote])
 
   const mouseStartPlaying = useCallback(() => play(mouseState, setMouseState), [mouseState, play])
