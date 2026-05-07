@@ -25,7 +25,7 @@ const SVGWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <svg
     width="100%"
     height="100%"
-    viewBox="0 0 1600 1600"
+    viewBox="0 0 2000 1600"
     onMouseMove={onMouseEvent}
     onMouseLeave={onMouseEvent}
     ref={SVGRef}

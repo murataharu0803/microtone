@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ChordPresets } from '@/components/chords/ChordPresets'
 import PitchCircle from '@/components/circle/PitchCircle'
 import PitchGrid from '@/components/grid/PitchGrid'
 import PitchLadder from '@/components/ladder/PitchLadder'
@@ -10,6 +11,7 @@ import { useKey } from '@/hooks/useKey'
 
 import AudioManager from '@/types/AudioManager'
 import ChordManager from '@/types/ChordManager'
+import ChordPresetManager from '@/types/ChordPresetManager'
 
 interface PitchVisualizeSystemProps {
   baseFrequency: number
@@ -24,6 +26,7 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
 }) => {
   const audioManager = React.useRef<AudioManager>(new AudioManager())
   const chordManager = React.useRef<ChordManager>(new ChordManager())
+  const chordPresetManager = React.useRef<ChordPresetManager>(new ChordPresetManager())
 
   useKey(
     '/',
@@ -56,6 +59,7 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
       endPitch,
       audioManager: audioManager.current,
       chordManager: chordManager.current,
+      chordPresetManager: chordPresetManager.current,
     }}
   >
     <PitchCircle
@@ -82,8 +86,13 @@ const PitchVisualizeSystem: React.FC<PitchVisualizeSystemProps> = ({
         ['x', 'c', 'v', 'b', 'n', 'm', ','],
         ['s', 'd', 'f', 'g', 'h', 'j', 'k'],
         ['w', 'e', 'r', 't', 'y', 'u', 'i'],
-        ['2', '3', '4', '5', '6', '7', '8'],
+        [],
       ]}
+    />
+    <ChordPresets
+      topLeft={{ x: 1440, y: 80 }}
+      width={400}
+      triggerKeys={['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=']}
     />
   </PitchVisualizeSystemContext.Provider>
 }

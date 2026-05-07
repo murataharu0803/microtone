@@ -89,6 +89,7 @@ interface PitchGridDotProps {
   dimensionUnits: Record<Dimension, number>
   scale: number
   triggerKey: string | null
+  inPreset?: boolean
 }
 
 const PitchGridDot: React.FC<PitchGridDotProps> = ({
@@ -96,11 +97,15 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
   dimensionUnits,
   scale,
   triggerKey,
+  inPreset = false,
 }) => {
+  const id = Math.random().toString(36).substring(2, 15)
+
   const {
     baseFrequency,
     startPitch,
     endPitch,
+    chordPresetManager,
   } = useContext(PitchVisualizeSystemContext)
 
   const factor = ALL_DIMENSIONS.reduce((acc, dim) => {
@@ -113,7 +118,13 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
 
   const buttonRef = useRef<SVGGElement>(null)
   const jiNote = new JINote(dimensionUnits, baseFrequency)
-  const { active } = useNote(frequency, buttonRef, triggerKey, jiNote)
+  const { active } = useNote(
+    frequency,
+    inPreset ? null : buttonRef,
+    inPreset ? null : triggerKey,
+    jiNote,
+    inPreset ? undefined : () => chordPresetManager?.addNoteToPreset(jiNote),
+  )
 
   const d1 = dimensionUnits[D1] || 0
   const d2 = dimensionUnits[D2] || 0
@@ -138,7 +149,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
       fill={active ? '#444444' : 'transparent'}
     />
     {dividedRing(
-      `d2-${d2}-d3-${d3}-dn-${dn}`,
+      `${id}-d2-${d2}-d3-${d3}-dn-${dn}`,
       position,
       'out',
       d2,
@@ -147,7 +158,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
       scale,
     )}
     {dividedRing(
-      `d2-${d2}-d3-${d3}-dn-${dn}`,
+      `${id}-d2-${d2}-d3-${d3}-dn-${dn}`,
       position,
       'mid',
       d3,
@@ -156,7 +167,7 @@ const PitchGridDot: React.FC<PitchGridDotProps> = ({
       scale,
     )}
     {d && dn && dividedRing(
-      `d2-${d2}-d3-${d3}-dn-${dn}`,
+      `${id}-d2-${d2}-d3-${d3}-dn-${dn}`,
       position,
       'in',
       dn,

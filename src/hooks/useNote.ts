@@ -4,6 +4,7 @@ import PitchVisualizeSystemContext from '@/context/PitchVisualizeSystemContext'
 
 import { useKey } from '@/hooks/useKey'
 import { useMouse } from '@/hooks/useMouse'
+
 import JINote from '@/types/JINote'
 
 type StateTuple = [string | null, React.Dispatch<React.SetStateAction<string | null>>]
@@ -13,6 +14,8 @@ export const useNote = (
   ref: React.RefObject<Element | null> | null,
   key?: string | null,
   jiNote?: JINote,
+  playCallback?: () => void,
+  stopCallback?: () => void,
 ) => {
   const { audioManager, chordManager } = useContext(PitchVisualizeSystemContext)
 
@@ -20,15 +23,16 @@ export const useNote = (
   const [keyState, setKeyState] = useState<string | null>(null)
 
   const play = useCallback((...[state, setState]: StateTuple) => {
-    if (state) setState(audioManager?.play(frequency, state) || null)
-    else setState(audioManager?.play(frequency) || null)
+    setState(audioManager?.play(frequency, state ?? undefined) || null)
     if (jiNote) chordManager?.add(jiNote)
-  }, [frequency, audioManager, chordManager, jiNote])
+    playCallback?.()
+  }, [frequency, audioManager, chordManager, jiNote, playCallback])
 
   const stop = useCallback((...[state, setState]: StateTuple) => {
     if (state) setState(audioManager?.stop(state) || null)
     if (state && jiNote) chordManager?.remove(jiNote)
-  }, [audioManager, chordManager, jiNote])
+    stopCallback?.()
+  }, [audioManager, chordManager, jiNote, stopCallback])
 
   const mouseStartPlaying = useCallback(() => play(mouseState, setMouseState), [mouseState, play])
   const mouseStopPlaying = useCallback(() => stop(mouseState, setMouseState), [mouseState, stop])
